@@ -4,7 +4,8 @@ import { createSlice } from "@reduxjs/toolkit";
 export const cvSlice = createSlice({
 	name: "cv",
 	initialState: {
-		cv: readLocalStorageValue({ key: "cv" })?.json || {},
+		// cv: readLocalStorageValue({ key: "cv" })?.json || {},
+		cv: {},
 	},
 	reducers: {
 		addDataToStore: (state, data) => {

@@ -1,30 +1,71 @@
 import { useState } from "react";
-import { Text, Image, SimpleGrid, Group, rem, Box } from "@mantine/core";
+import { Text, Image, SimpleGrid, Group, rem, Box, Button } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
 
 export default function ImageDropzone({ form }) {
 	const [file, setFile] = useState(null);
+	const [uploading, setUploading] = useState(false);
+	const [uploadedUrl, setUploadedUrl] = useState(null);
 
-	// Generate a preview URL if a file exists
 	const previews = file ? (
 		<Image
 			src={URL.createObjectURL(file)}
 			alt="Profile Preview"
-			onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))} // Revoke the URL to free memory
+			onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))}
 		/>
 	) : null;
 
 	const handleSetImage = (files) => {
-		// Set the file to state and update the form
 		setFile(files[0]);
-		form.setFieldValue("profileImage", files[0]);
+		form.setFieldValue("profileImage", files[0]); // Keep in form state if needed
 	};
 
 	const eraseImage = () => {
-		// Clear the file and reset the form field
 		setFile(null);
+		setUploadedUrl(null);
 		form.setFieldValue("profileImage", null);
+	};
+
+	const handleSubmit = async () => {
+		if (!file) {
+			alert("Please upload an image before submitting.");
+			return;
+		}
+
+		try {
+			setUploading(true);
+
+			// Prepare the file data for Cloudinary
+			const formData = new FormData();
+			formData.append("file", file); // Add the file
+			formData.append("upload_preset", "zuapqncl");
+			formData.append("folder", "cv_builder");
+
+			// Upload to Cloudinary
+			const response = await fetch(
+				`https://api.cloudinary.com/v1_1/hostingimagesservice/image/upload`,
+				{
+					method: "POST",
+					body: formData,
+				}
+			);
+
+			const data = await response.json();
+
+			if (data.secure_url) {
+				setUploadedUrl(data.secure_url); // Store the Cloudinary URL
+				form.setFieldValue("profileImage", data.secure_url); // Update the form with the Cloudinary URL
+				alert("Image uploaded successfully!");
+			} else {
+				console.log("Something not right", data);
+			}
+		} catch (error) {
+			console.error("Error uploading to Cloudinary:", error);
+			alert("Failed to upload image. Please try again.");
+		} finally {
+			setUploading(false);
+		}
 	};
 
 	return (
@@ -112,6 +153,17 @@ export default function ImageDropzone({ form }) {
 					</Box>
 				</SimpleGrid>
 			)}
+
+			{/* Submit Button */}
+			<Button
+				mt={10}
+				onClick={handleSubmit}
+				loading={uploading}
+				disabled={uploading}
+				color="blue"
+			>
+				{uploading ? "Uploading..." : "Upload"}
+			</Button>
 		</div>
 	);
 }

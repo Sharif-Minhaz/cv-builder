@@ -7,7 +7,7 @@ export const routers = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/" element={<Root />}>
 			<Route index element={<CVFormPage />} />
-			<Route path="preview" element={<CVPreviewPage />} />
+			<Route path="result" element={<CVPreviewPage />} />
 		</Route>
 	)
 );

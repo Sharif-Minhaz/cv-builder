@@ -1,9 +1,15 @@
 import { useSelector } from "react-redux";
+import { selectCvValue } from "../features/cv/cvSlice";
+import { Image } from "@mantine/core";
 
 export default function CVContent() {
-	const cv = useSelector((state) => state.cv.cv);
+	const cv = useSelector(selectCvValue);
 
-	console.log("info:", `${cv}`);
+	console.log(cv);
 
-	return <section></section>;
+	return (
+		<section>
+			<Image src={cv.profileImage} alt="CV profile" />
+		</section>
+	);
 }

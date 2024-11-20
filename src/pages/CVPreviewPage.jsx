@@ -1,3 +1,9 @@
+import CVContent from "../components/CVContent";
+
 export default function CVPreviewPage() {
-	return <div>CVPreviewPage</div>;
+	return (
+		<div>
+			<CVContent />
+		</div>
+	);
 }

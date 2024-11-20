@@ -17,7 +17,7 @@ export default function CVForm() {
 	const dispatch = useDispatch();
 
 	const initialValues = {
-		profileImage: cvValue?.profileImage || null,
+		profileImage: cvValue?.profileImage || "",
 		fname: cvValue?.fname || "",
 		designation: cvValue?.designation || "",
 		email: cvValue?.email || "minhaz.rbs@gmail.com",
