@@ -20,8 +20,8 @@ export default function ProfessionalExperience({ removeProfExp, form, index }) {
 			<Grid.Col span={4}>
 				<TextInput
 					withAsterisk
-					label="Title"
-					placeholder="SWE Engineer"
+					label="Duration"
+					placeholder="Jul 10 - Dec 10"
 					{...form.getInputProps(`professionalExp.${index}.duration`)}
 				/>
 			</Grid.Col>
@@ -29,7 +29,7 @@ export default function ProfessionalExperience({ removeProfExp, form, index }) {
 				<TextInput
 					withAsterisk
 					label="Designation"
-					placeholder="Course ABC"
+					placeholder="Software Engineer"
 					{...form.getInputProps(`professionalExp.${index}.designation`)}
 				/>
 			</Grid.Col>

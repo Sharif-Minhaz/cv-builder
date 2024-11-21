@@ -7,7 +7,7 @@ export default function PreviewModal() {
 
 	return (
 		<>
-			<Modal opened={opened} onClose={close} title="Authentication">
+			<Modal size="80%" opened={opened} onClose={close} title="Preview">
 				<CVContent />
 			</Modal>
 

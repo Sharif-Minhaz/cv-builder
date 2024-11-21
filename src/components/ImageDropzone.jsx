@@ -14,7 +14,9 @@ export default function ImageDropzone({ form }) {
 			alt="Profile Preview"
 			onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))}
 		/>
-	) : null;
+	) : (
+		<Image src={uploadedUrl} />
+	);
 
 	const handleSetImage = (files) => {
 		setFile(files[0]);

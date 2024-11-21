@@ -120,6 +120,7 @@ export default function CVForm() {
 	const handleSubmit = (values) => {
 		dispatch(addDataToStore(values));
 		setValue(values);
+		alert("Data saved to localstorage");
 	};
 
 	// handle summary rich text editor
