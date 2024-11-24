@@ -14,7 +14,7 @@ import { IconArrowLeft, IconTrash } from "@tabler/icons-react";
 import { useReactToPrint } from "react-to-print";
 import { useRef } from "react";
 
-export default function CVContent() {
+export default function CVContent({ closeModal = () => {} }) {
 	const cv = useSelector(selectCvValue);
 	const navigate = useNavigate();
 	const contentRef = useRef();
@@ -42,7 +42,13 @@ export default function CVContent() {
 				</Grid>
 			</Box>
 			<Flex gap={12} mt={20}>
-				<Button bg="blue" onClick={() => navigate("/")}>
+				<Button
+					bg="blue"
+					onClick={() => {
+						navigate("/");
+						closeModal();
+					}}
+				>
 					<IconArrowLeft />
 					Back
 				</Button>

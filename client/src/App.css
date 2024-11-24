@@ -17,6 +17,11 @@
     border-top: 2px solid #9a9a9a !important;
 }
 
+/* ************ portfolio section ************** */
+.portfolio-section :is(h1, h2, h3) {
+    font-size: 15px !important;
+}
+
 @media print {
     .cv-content {
         font-family: "Lora", serif !important;

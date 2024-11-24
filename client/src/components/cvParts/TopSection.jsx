@@ -29,7 +29,7 @@ export default function TopSection({ cv }) {
 						w="100px"
 						bg="#3d3d3d"
 						pos="absolute"
-						right={-53}
+						right={-54}
 						top={0}
 						style={{ clipPath: "polygon(100% 0, 46% 0, 46% 100%)" }}
 					/>

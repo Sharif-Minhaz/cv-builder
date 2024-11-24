@@ -8,7 +8,7 @@ export default function PreviewModal() {
 	return (
 		<>
 			<Modal size="80%" opened={opened} onClose={close} title="Preview">
-				<CVContent />
+				<CVContent closeModal={close} />
 			</Modal>
 
 			<Button onClick={open}>Preview</Button>

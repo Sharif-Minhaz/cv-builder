@@ -8,7 +8,10 @@ export default function LanguageSection({ languages }) {
 			<CvHeading heading="Language" />
 			<HeadingDivider w={200} />
 			<TypographyStylesProvider>
-				<div dangerouslySetInnerHTML={{ __html: languages }} />
+				<div
+					style={{ fontSize: "13px", lineHeight: 1.1 }}
+					dangerouslySetInnerHTML={{ __html: languages }}
+				/>
 			</TypographyStylesProvider>
 		</Box>
 	);

@@ -159,15 +159,17 @@ export default function ImageDropzone({ form }) {
 			)}
 
 			{/* Submit Button */}
-			<Button
-				mt={10}
-				onClick={handleSubmit}
-				loading={uploading}
-				disabled={uploading}
-				color="blue"
-			>
-				{uploading ? "Uploading..." : "Upload"}
-			</Button>
+			{!uploadedUrl && (
+				<Button
+					mt={10}
+					onClick={handleSubmit}
+					loading={uploading}
+					disabled={uploading}
+					color="blue"
+				>
+					{uploading ? "Uploading..." : "Upload"}
+				</Button>
+			)}
 		</div>
 	);
 }
