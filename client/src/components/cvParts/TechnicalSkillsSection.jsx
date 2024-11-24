@@ -9,7 +9,7 @@ export default function TechnicalSkillsSection({ technicalSkills }) {
 			<HeadingDivider w={300} />
 			<TypographyStylesProvider>
 				<div
-					style={{ fontSize: "11px", lineHeight: "8px" }}
+					style={{ fontSize: "11px", lineHeight: "12px" }}
 					dangerouslySetInnerHTML={{ __html: technicalSkills }}
 				/>
 			</TypographyStylesProvider>

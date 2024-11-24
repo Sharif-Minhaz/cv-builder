@@ -74,7 +74,7 @@ export default function ImageDropzone({ form }) {
 
 	return (
 		<div>
-			<Box mb={2} style={{ fontSize: "15px" }}>
+			<Box mb={4} style={{ fontSize: "18px" }}>
 				Upload profile image
 			</Box>
 			{!file && !uploadedUrl ? (
@@ -118,8 +118,9 @@ export default function ImageDropzone({ form }) {
 						<Dropzone.Idle>
 							<IconPhoto
 								style={{
-									width: rem(52),
-									height: rem(52),
+									marginTop: rem(20),
+									width: rem(85),
+									height: rem(85),
 									color: "var(--mantine-color-dimmed)",
 								}}
 								stroke={1.5}
@@ -127,7 +128,7 @@ export default function ImageDropzone({ form }) {
 						</Dropzone.Idle>
 
 						<div>
-							<Text size="xl" inline ta="center" px="md" lh={1.2} c="gray">
+							<Text size="lg" inline ta="center" pb={15} px="md" lh={1.4} c="gray">
 								Drag image here or click to select file
 							</Text>
 						</div>
@@ -167,7 +168,8 @@ export default function ImageDropzone({ form }) {
 					disabled={uploading}
 					color="blue"
 				>
-					{uploading ? "Uploading..." : "Upload"}
+					<IconUpload size={rem(15)} stroke={2} />
+					<Text ml={5}>{uploading ? "Uploading..." : "Upload"}</Text>
 				</Button>
 			)}
 		</div>

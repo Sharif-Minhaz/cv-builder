@@ -1,9 +1,12 @@
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, Button } from "@mantine/core";
 import CVContent from "./CVContent";
+import { selectCvValue } from "../features/cv/cvSlice";
+import { useSelector } from "react-redux";
 
 export default function PreviewModal() {
 	const [opened, { open, close }] = useDisclosure(false);
+	const cv = useSelector(selectCvValue);
 
 	return (
 		<>
@@ -11,7 +14,9 @@ export default function PreviewModal() {
 				<CVContent closeModal={close} />
 			</Modal>
 
-			<Button onClick={open}>Preview</Button>
+			<Button disabled={!cv.fname} onClick={open}>
+				Preview
+			</Button>
 		</>
 	);
 }

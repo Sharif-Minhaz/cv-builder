@@ -1,4 +1,5 @@
 import { Box, Divider, Flex, Image, Stack, Text } from "@mantine/core";
+// import { useMediaQuery } from "@mantine/hooks";
 import {
 	IconBrandGithubFilled,
 	IconBrandLinkedin,
@@ -8,7 +9,7 @@ import {
 } from "@tabler/icons-react";
 import { useMemo } from "react";
 
-export default function TopSection({ cv }) {
+export default function TopSection({ pdf = false, cv }) {
 	const socialData = useMemo(
 		() => [
 			{ title: "mobile", icon: IconPhoneFilled, link: `https://wa.me/${cv.mobile}` },
@@ -20,6 +21,8 @@ export default function TopSection({ cv }) {
 		[cv]
 	);
 
+	// const isDesktop = useMediaQuery(`(min-width: 768px)`);
+
 	return (
 		<Flex justify="space-between" bg="#f4f4f4" py={12} pr={12}>
 			<Flex>
@@ -27,6 +30,7 @@ export default function TopSection({ cv }) {
 					<Box
 						h="100%"
 						w="100px"
+						visibleFrom={pdf ? "" : "sm"}
 						bg="#3d3d3d"
 						pos="absolute"
 						right={-54}
@@ -55,11 +59,17 @@ export default function TopSection({ cv }) {
 			<Stack gap={5} justify="flex-end" align="flex-end">
 				{socialData.map((data) => (
 					<Flex gap={8} key={data.title} wrap="nowrap">
-						<a href={data.link} style={{ textDecorationColor: "#5ba2ff" }}>
-							<Text size="11px" c="#5ba2ff">
-								{cv[data.title]}
-							</Text>
-						</a>
+						<Box visibleFrom={pdf ? "" : "sm"}>
+							<a
+								href={data.link}
+								target="_blank"
+								style={{ textDecorationColor: "#5ba2ff" }}
+							>
+								<Text size="11px" c="#5ba2ff">
+									{cv[data.title]}
+								</Text>
+							</a>
+						</Box>
 						<Flex
 							style={{ borderRadius: "50%" }}
 							align="center"
@@ -68,7 +78,9 @@ export default function TopSection({ cv }) {
 							w={18}
 							h={18}
 						>
-							<data.icon color="white" size={11} />
+							<a href={data.link} target="_blank" style={{ textDecoration: "none" }}>
+								<data.icon color="white" size={11} />
+							</a>
 						</Flex>
 					</Flex>
 				))}

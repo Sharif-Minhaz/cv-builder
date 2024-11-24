@@ -1,22 +1,23 @@
 import { useLocalStorage } from "@mantine/hooks";
 import superjson from "superjson";
-import { Button, Group, TextInput, Grid, Stack, Box, Divider, Flex, Text } from "@mantine/core";
+import { Button, Group, Stack, Box, Divider, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import ImageDropzone from "./ImageDropzone";
-import { IMaskInput } from "react-imask";
 import RichTextEditorComponent from "./RichTextEditorComponent";
-import Eduction from "./Eduction";
-import ProfessionalExperience from "./ProfessionalExperience";
-import { IconPlus } from "@tabler/icons-react";
 import PreviewModal from "./PreviewModal";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCvValue, addDataToStore } from "../features/cv/cvSlice";
-import { useNavigate } from "react-router-dom";
+import { selectCvValue, addDataToStore, clearDataFromStore } from "../features/cv/cvSlice";
+import { useState } from "react";
+import BasicFields from "./BasicFields";
+import EducationFields from "./EducationFields";
+import ProfessionalFields from "./ProfessionalFields";
+import SaveAlert from "./SaveAlert";
 
 export default function CVForm() {
+	const [showAlert, setShowAlert] = useState(false);
+	const [key, setKey] = useState(Date.now());
 	const cvValue = useSelector(selectCvValue);
 	const dispatch = useDispatch();
-	const navigate = useNavigate();
 
 	const initialValues = {
 		profileImage: cvValue?.profileImage || "",
@@ -26,7 +27,7 @@ export default function CVForm() {
 		mobile: cvValue?.mobile || "",
 		github: cvValue?.github || "https://github.com/Sharif-Minhaz",
 		linkedIn: cvValue?.linkedIn || "https://www.linkedin.com/in/minhaz-sharif-614724205",
-		website: cvValue?.website || "https://github.com/Sharif-Minhaz",
+		website: cvValue?.website || "https://dev-sharif-md-minhaz.netlify.app/",
 		summary: cvValue?.summary || "",
 		education: cvValue?.education?.[0]?.orgName
 			? cvValue?.education
@@ -122,8 +123,7 @@ export default function CVForm() {
 	const handleSubmit = (values) => {
 		dispatch(addDataToStore(values));
 		setValue(values);
-		alert("Data saved to localstorage");
-		navigate("/result");
+		setShowAlert(true);
 	};
 
 	// handle summary rich text editor
@@ -146,173 +146,93 @@ export default function CVForm() {
 		form.setFieldValue("languages", value);
 	};
 
+	const resetFields = () => {
+		form.reset();
+		dispatch(clearDataFromStore());
+		setKey((prev) => prev + Date.now());
+		localStorage.clear();
+	};
+
 	return (
-		<form onSubmit={form.onSubmit(handleSubmit)}>
-			<ImageDropzone form={form} />
-			<Divider mb={4} mt={14} />
-			<Grid>
-				{/* full name field */}
-				<Grid.Col span={12}>
-					<TextInput
-						withAsterisk
-						label="Full Name"
-						placeholder="John Doe"
-						key={form.key("fname")}
-						mt={8}
-						{...form.getInputProps("fname")}
+		<>
+			{showAlert && <SaveAlert />}
+			{/* ----------- form wrapper ---------- */}
+			<form onSubmit={form.onSubmit(handleSubmit)}>
+				<ImageDropzone form={form} />
+				<Divider mb={4} mt={14} />
+				{/* ----------- basic information fields (name, designation, email etc) ---------- */}
+				<BasicFields form={form} />
+				{/* ----------- summary here ---------- */}
+				<Stack mt={12}>
+					<Box style={{ fontSize: "15px" }}>Summary</Box>
+					<RichTextEditorComponent
+						key={key}
+						value={form.values.summary}
+						onChange={handleSummaryChange}
+						placeholder="Enter your summary"
 					/>
-				</Grid.Col>
-				{/* Designation field */}
-				<Grid.Col span={6}>
-					<TextInput
-						withAsterisk
-						label="Your Designation"
-						placeholder="designation"
-						key={form.key("designation")}
-						mt={8}
-						{...form.getInputProps("designation")}
-					/>
-				</Grid.Col>
-				{/* email address field */}
-				<Grid.Col span={6}>
-					<TextInput
-						withAsterisk
-						label="Your Email Address"
-						placeholder="john@gmail.com"
-						key={form.key("email")}
-						mt={8}
-						{...form.getInputProps("email")}
-					/>
-				</Grid.Col>
-			</Grid>
-			<Grid>
-				<Grid.Col span={6}>
-					{/* phone number field */}
-					<TextInput
-						component={IMaskInput}
-						withAsterisk
-						label="Your Phone number"
-						mask="01000000000"
-						placeholder="Your phone"
-						mt={8}
-						{...form.getInputProps("mobile")}
-					/>
-				</Grid.Col>
-				<Grid.Col span={6}>
-					{/* github link */}
-					<TextInput
-						withAsterisk
-						label="Your github link"
-						key={form.key("github")}
-						mt={8}
-						placeholder="https://github.com/Sharif-Minhaz"
-						{...form.getInputProps("github")}
-					/>
-				</Grid.Col>
-			</Grid>
+				</Stack>
 
-			<Grid>
-				<Grid.Col span={6}>
-					{/* linked in link */}
-					<TextInput
-						withAsterisk
-						label="Your linked in link"
-						key={form.key("linkedIn")}
-						mt={8}
-						placeholder="https://www.linkedin.com/in/minhaz-sharif-614724205"
-						{...form.getInputProps("linkedIn")}
-					/>
-				</Grid.Col>
-				<Grid.Col span={6}>
-					{/* website link here */}
-					<TextInput
-						withAsterisk
-						label="Your website link"
-						key={form.key("website")}
-						mt={8}
-						{...form.getInputProps("website")}
-					/>
-				</Grid.Col>
-			</Grid>
-			{/* ----------- summary here ---------- */}
-			<Stack mt={12}>
-				<Box style={{ fontSize: "15px" }}>Summary</Box>
-				<RichTextEditorComponent
-					value={form.values.summary}
-					onChange={handleSummaryChange}
-					placeholder="Enter your summary"
-				/>
-			</Stack>
-
-			{/* education section */}
-			<Flex align="center" justify="space-between" mt={32} mb={8}>
-				<Text size="22px">Education</Text>
-				<Button onClick={addEducation}>
-					<IconPlus />
-				</Button>
-			</Flex>
-			<Divider />
-			{form.values?.education?.map((_, index) => (
-				<Eduction removeEducation={removeEducation} index={index} form={form} key={index} />
-			))}
-
-			{/* technical skills section */}
-			<Stack mt={20}>
-				<Box style={{ fontSize: "22px" }}>Technical Skills</Box>
-				<Divider mb={10} />
-				<RichTextEditorComponent
-					value={form.values.technicalSkills}
-					onChange={handleTechnicalSkillsChange}
-					placeholder="Enter your technical skills"
-				/>
-			</Stack>
-
-			{/* professional experience section */}
-			<Flex align="center" justify="space-between" mt={32} mb={8}>
-				<Text size="22px">Professional Experiences</Text>
-				<Button onClick={addProfessionalExp}>
-					<IconPlus />
-				</Button>
-			</Flex>
-			<Divider />
-			{form.values?.professionalExp?.map((_, index) => (
-				<ProfessionalExperience
-					removeProfExp={removeProfessionalExp}
-					index={index}
+				{/* education section */}
+				<EducationFields
+					addEducation={addEducation}
+					removeEducation={removeEducation}
 					form={form}
-					key={index}
 				/>
-			))}
 
-			{/* Portfolio section */}
-			<Stack mt={32} mb={8}>
-				<Text size="22px">Portfolio Section</Text>
-				<Divider />
-				<RichTextEditorComponent
-					value={form.values.portfolio}
-					onChange={handlePortfolioChange}
-					placeholder="Enter your portfolio section"
+				{/* technical skills section */}
+				<Stack mt={20}>
+					<Box style={{ fontSize: "22px" }}>Technical Skills</Box>
+					<Divider mb={10} />
+					<RichTextEditorComponent
+						key={key}
+						value={form.values.technicalSkills}
+						onChange={handleTechnicalSkillsChange}
+						placeholder="Enter your technical skills"
+					/>
+				</Stack>
+
+				{/* professional experience section */}
+				<ProfessionalFields
+					addProfessionalExp={addProfessionalExp}
+					removeProfessionalExp={removeProfessionalExp}
+					form={form}
 				/>
-			</Stack>
 
-			{/* Language section */}
-			<Stack mt={32} mb={8}>
-				<Text size="22px">Include Languages</Text>
-				<Divider />
-				<RichTextEditorComponent
-					value={form.values.languages}
-					onChange={handleLanguageChange}
-					placeholder="Enter your preferred language"
-				/>
-			</Stack>
+				{/* Portfolio section */}
+				<Stack mt={32} mb={8}>
+					<Text size="22px">Portfolio Section</Text>
+					<Divider />
+					<RichTextEditorComponent
+						key={key}
+						value={form.values.portfolio}
+						onChange={handlePortfolioChange}
+						placeholder="Enter your portfolio section"
+					/>
+				</Stack>
 
-			<Group justify="flex-end" mt="md">
-				<PreviewModal />
-				<Button bg="teal" type="submit">
-					Save
-				</Button>
-				<Button bg="red">Reset</Button>
-			</Group>
-		</form>
+				{/* Language section */}
+				<Stack mt={32} mb={8}>
+					<Text size="22px">Include Languages</Text>
+					<Divider />
+					<RichTextEditorComponent
+						key={key}
+						value={form.values.languages}
+						onChange={handleLanguageChange}
+						placeholder="Enter your preferred language"
+					/>
+				</Stack>
+
+				<Group justify="flex-end" mt="md">
+					<PreviewModal />
+					<Button bg="teal" type="submit">
+						Save
+					</Button>
+					<Button type="reset" bg="red" onClick={resetFields}>
+						Reset
+					</Button>
+				</Group>
+			</form>
+		</>
 	);
 }
