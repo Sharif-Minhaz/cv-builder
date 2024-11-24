@@ -6,7 +6,7 @@ import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
 export default function ImageDropzone({ form }) {
 	const [file, setFile] = useState(null);
 	const [uploading, setUploading] = useState(false);
-	const [uploadedUrl, setUploadedUrl] = useState(null);
+	const [uploadedUrl, setUploadedUrl] = useState(form.values?.profileImage);
 
 	const previews = file ? (
 		<Image
@@ -14,9 +14,11 @@ export default function ImageDropzone({ form }) {
 			alt="Profile Preview"
 			onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))}
 		/>
-	) : (
-		<Image src={uploadedUrl} />
-	);
+	) : uploadedUrl ? (
+		<Image src={uploadedUrl} alt="image" />
+	) : null;
+
+	// const previews = ;
 
 	const handleSetImage = (files) => {
 		setFile(files[0]);
@@ -75,7 +77,7 @@ export default function ImageDropzone({ form }) {
 			<Box mb={2} style={{ fontSize: "15px" }}>
 				Upload profile image
 			</Box>
-			{!file ? (
+			{!file && !uploadedUrl ? (
 				<Dropzone
 					onDrop={handleSetImage}
 					onReject={(files) => console.log("rejected files", files)}

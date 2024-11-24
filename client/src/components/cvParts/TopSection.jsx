@@ -21,32 +21,32 @@ export default function TopSection({ cv }) {
 	);
 
 	return (
-		<Flex justify="space-between">
+		<Flex justify="space-between" bg="#f4f4f4" py={12} pr={12}>
 			<Flex>
-				<Flex pos="relative" align="center" px={20} py={8} gap={30} bg="#3d3d3d">
+				<Flex pos="relative" align="center" pl={20} pr={40} py={8} gap={25} bg="#3d3d3d">
 					<Box
 						h="100%"
 						w="100px"
 						bg="#3d3d3d"
 						pos="absolute"
-						right={-54}
+						right={-53}
 						top={0}
 						style={{ clipPath: "polygon(100% 0, 46% 0, 46% 100%)" }}
-					></Box>
+					/>
 					<Image
-						w={130}
-						h={130}
+						w={100}
+						h={100}
 						radius="50%"
-						style={{ border: "1px solid grey" }}
+						bd="1px solid grey"
 						src={cv.profileImage}
 						alt="CV profile"
 					/>
 					<div>
-						<Text c="white" size="28px">
+						<Text c="white" size="22.4px">
 							{cv.fname}
 						</Text>
-						<Divider my={8} />
-						<Text c="white" size="18px">
+						<Divider className="top-header" my={8} />
+						<Text c="white" size="13.8px">
 							{cv.designation}
 						</Text>
 					</div>
@@ -54,9 +54,9 @@ export default function TopSection({ cv }) {
 			</Flex>
 			<Stack gap={5} justify="flex-end" align="flex-end">
 				{socialData.map((data) => (
-					<Flex gap={10} key={data.title}>
+					<Flex gap={8} key={data.title} wrap="nowrap">
 						<a href={data.link} style={{ textDecorationColor: "#5ba2ff" }}>
-							<Text size="15px" c="#5ba2ff">
+							<Text size="11px" c="#5ba2ff">
 								{cv[data.title]}
 							</Text>
 						</a>
@@ -65,10 +65,10 @@ export default function TopSection({ cv }) {
 							align="center"
 							justify="center"
 							bg="#3d3d3d"
-							w={23}
-							h={23}
+							w={18}
+							h={18}
 						>
-							<data.icon color="white" size={15} />
+							<data.icon color="white" size={11} />
 						</Flex>
 					</Flex>
 				))}

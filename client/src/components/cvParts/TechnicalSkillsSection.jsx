@@ -1,13 +1,18 @@
-import { Box, Divider, TypographyStylesProvider } from "@mantine/core";
+import { Box, TypographyStylesProvider } from "@mantine/core";
+import CvHeading from "./CvHeading";
+import HeadingDivider from "./HeadingDivider";
 
 export default function TechnicalSkillsSection({ technicalSkills }) {
 	return (
-		<section>
-			<Box component="h2">TECHNICAL SKILLS</Box>
-			<Divider />
+		<Box component="section" px={20}>
+			<CvHeading heading="Technical skills" />
+			<HeadingDivider w={300} />
 			<TypographyStylesProvider>
-				<div dangerouslySetInnerHTML={{ __html: technicalSkills }} />
+				<div
+					style={{ fontSize: "11px", lineHeight: "8px" }}
+					dangerouslySetInnerHTML={{ __html: technicalSkills }}
+				/>
 			</TypographyStylesProvider>
-		</section>
+		</Box>
 	);
 }

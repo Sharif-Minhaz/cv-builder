@@ -1,15 +1,18 @@
-import { Box, Divider, TypographyStylesProvider } from "@mantine/core";
+import { Box, TypographyStylesProvider } from "@mantine/core";
+import CvHeading from "./CvHeading";
+import HeadingDivider from "./HeadingDivider";
 
 export default function SummarySection({ details }) {
 	return (
-		<section>
-			<Box component="h2" ta="center">
-				SUMMARY
-			</Box>
-			<Divider />
+		<Box component="section" px={20}>
+			<CvHeading heading="Summary" ta="center" />
+			<HeadingDivider w={300} mx="auto" />
 			<TypographyStylesProvider>
-				<div dangerouslySetInnerHTML={{ __html: details }} />
+				<div
+					dangerouslySetInnerHTML={{ __html: details }}
+					style={{ textAlign: "center", fontSize: "12px" }}
+				/>
 			</TypographyStylesProvider>
-		</section>
+		</Box>
 	);
 }

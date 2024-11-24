@@ -11,10 +11,12 @@ import { IconPlus } from "@tabler/icons-react";
 import PreviewModal from "./PreviewModal";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCvValue, addDataToStore } from "../features/cv/cvSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function CVForm() {
 	const cvValue = useSelector(selectCvValue);
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const initialValues = {
 		profileImage: cvValue?.profileImage || "",
@@ -37,7 +39,7 @@ export default function CVForm() {
 		languages: cvValue?.languages || "",
 	};
 
-	const [value, setValue] = useLocalStorage({
+	const [_, setValue] = useLocalStorage({
 		key: "cv",
 		defaultValue: "{}",
 		serialize: superjson.stringify,
@@ -121,6 +123,7 @@ export default function CVForm() {
 		dispatch(addDataToStore(values));
 		setValue(values);
 		alert("Data saved to localstorage");
+		navigate("/result");
 	};
 
 	// handle summary rich text editor
@@ -308,6 +311,7 @@ export default function CVForm() {
 				<Button bg="teal" type="submit">
 					Save
 				</Button>
+				<Button bg="red">Reset</Button>
 			</Group>
 		</form>
 	);

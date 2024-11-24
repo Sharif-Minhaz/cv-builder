@@ -1,22 +1,30 @@
-import { Box, Divider, Flex, Text } from "@mantine/core";
+import { Box, Flex, Stack, Text } from "@mantine/core";
+import CvHeading from "./CvHeading";
+import HeadingDivider from "./HeadingDivider";
 
 export default function EducationSection({ educations }) {
 	return (
-		<section>
-			<Box component="h2">EDUCATION</Box>
-			<Divider />
-			<Box>
+		<Box component="section" px={20}>
+			<CvHeading heading="education" />
+			<HeadingDivider w={200} />
+			<Stack gap={12}>
 				{educations.map((edu) => (
 					<Box key={edu.orgName}>
 						<Flex justify="space-between">
-							<Text>{edu.orgName}</Text>
-							<Text fs="italic">{edu.duration}</Text>
+							<Text fw="bold" size="16px">
+								{edu.orgName}
+							</Text>
+							<Text size="12px" fs="italic">
+								{edu.duration}
+							</Text>
 						</Flex>
-						<Text>{edu.title}</Text>
-						<Text>{edu.grade}</Text>
+						<Text my={5} size="13px">
+							{edu.title}
+						</Text>
+						<Text size="13px">Grade: {edu.grade}</Text>
 					</Box>
 				))}
-			</Box>
-		</section>
+			</Stack>
+		</Box>
 	);
 }

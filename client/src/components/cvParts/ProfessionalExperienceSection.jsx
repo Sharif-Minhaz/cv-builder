@@ -1,24 +1,30 @@
-import { Box, Divider, Flex, Text, TypographyStylesProvider } from "@mantine/core";
+import { Box, Flex, Stack, Text, TypographyStylesProvider } from "@mantine/core";
+import CvHeading from "./CvHeading";
+import HeadingDivider from "./HeadingDivider";
 
 export default function ProfessionalExperienceSection({ proExperience }) {
 	return (
-		<section>
-			<Box component="h2">PROFESSIONAL EXPERIENCE</Box>
-			<Divider />
-			<Box>
+		<Box component="section" px={20}>
+			<CvHeading heading="PROFESSIONAL EXPERIENCE" />
+			<HeadingDivider />
+			<Stack gap={15}>
 				{proExperience.map((pro) => (
 					<Box key={pro.orgName}>
 						<Flex justify="space-between">
-							<Text>{pro.orgName}</Text>
-							<Text fs="italic">{pro.duration}</Text>
+							<Text fw="bold" size="18px">
+								{pro.orgName}
+							</Text>
+							<Text size="13px" fs="italic">
+								{pro.duration}
+							</Text>
 						</Flex>
-						<Text>{pro.title}</Text>
+						<Text my={5}>{pro.designation}</Text>
 						<TypographyStylesProvider>
 							<div dangerouslySetInnerHTML={{ __html: pro.role }} />
 						</TypographyStylesProvider>
 					</Box>
 				))}
-			</Box>
-		</section>
+			</Stack>
+		</Box>
 	);
 }
