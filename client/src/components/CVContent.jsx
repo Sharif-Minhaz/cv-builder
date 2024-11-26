@@ -24,7 +24,7 @@ export default function CVContent({ closeModal = () => {} }) {
 	const contentRef = useRef();
 	const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
-	// modal config
+	// confirmation modal config
 	const [opened, { open, close }] = useDisclosure(false);
 
 	const reactToPrintFn = useReactToPrint({
@@ -45,8 +45,10 @@ export default function CVContent({ closeModal = () => {} }) {
 	return (
 		<section>
 			<Box className="cv-content" bd="1px solid #dfdfdf" pb={20}>
+				{/* --------- basic info section --------- */}
 				<TopSection cv={cv} />
 				<Divider className="section-divider" size="4px" mb={12} />
+				{/* --------- summary section --------- */}
 				<SummarySection details={cv?.summary} />
 				<Grid mt={16}>
 					<Grid.Col span={isMobile ? 12 : 7} style={{ borderRight: "2px solid #7b7b7b" }}>

@@ -7,8 +7,20 @@ import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
 import Placeholder from "@tiptap/extension-placeholder";
+import { useMediaQuery } from "@mantine/hooks";
+import { em } from "@mantine/core";
+import ErrorTooltip from "./ErrorTooltip";
+import { useEffect } from "react";
 
-const RichTextEditorComponent = ({ value, onChange, placeholder }) => {
+const RichTextEditorComponent = ({
+	value,
+	onChange,
+	placeholder,
+	error,
+	disableErrorTooltip = false,
+}) => {
+	const isTablet = useMediaQuery(`(max-width: ${em(768)})`);
+	console.log(value);
 	const editor = useEditor({
 		extensions: [
 			StarterKit,
@@ -27,55 +39,68 @@ const RichTextEditorComponent = ({ value, onChange, placeholder }) => {
 		},
 	});
 
+	useEffect(() => {
+		if (editor && editor.getHTML() !== value) {
+			editor.commands.setContent(value || ""); // Default to an empty paragraph
+		}
+	}, [value, editor]);
+
 	return (
-		<RichTextEditor editor={editor} mt={-10} mih={150}>
-			<RichTextEditor.Toolbar>
-				<RichTextEditor.ControlsGroup>
-					<RichTextEditor.Bold />
-					<RichTextEditor.Italic />
-					<RichTextEditor.Underline />
-					<RichTextEditor.Strikethrough />
-					<RichTextEditor.ClearFormatting />
-					<RichTextEditor.Highlight />
-					<RichTextEditor.Code />
-				</RichTextEditor.ControlsGroup>
+		<ErrorTooltip message={error} disableErrorTooltip={disableErrorTooltip}>
+			<RichTextEditor
+				bd={error && "1px solid #ff5b5b"}
+				editor={editor}
+				mt={-10}
+				mih={isTablet ? 250 : 150}
+			>
+				<RichTextEditor.Toolbar>
+					<RichTextEditor.ControlsGroup>
+						<RichTextEditor.Bold />
+						<RichTextEditor.Italic />
+						<RichTextEditor.Underline />
+						<RichTextEditor.Strikethrough />
+						<RichTextEditor.ClearFormatting />
+						<RichTextEditor.Highlight />
+						<RichTextEditor.Code />
+					</RichTextEditor.ControlsGroup>
 
-				<RichTextEditor.ControlsGroup>
-					<RichTextEditor.H1 />
-					<RichTextEditor.H2 />
-					<RichTextEditor.H3 />
-					<RichTextEditor.H4 />
-				</RichTextEditor.ControlsGroup>
+					<RichTextEditor.ControlsGroup>
+						<RichTextEditor.H1 />
+						<RichTextEditor.H2 />
+						<RichTextEditor.H3 />
+						<RichTextEditor.H4 />
+					</RichTextEditor.ControlsGroup>
 
-				<RichTextEditor.ControlsGroup>
-					<RichTextEditor.Blockquote />
-					<RichTextEditor.Hr />
-					<RichTextEditor.BulletList />
-					<RichTextEditor.OrderedList />
-					<RichTextEditor.Subscript />
-					<RichTextEditor.Superscript />
-				</RichTextEditor.ControlsGroup>
+					<RichTextEditor.ControlsGroup>
+						<RichTextEditor.Blockquote />
+						<RichTextEditor.Hr />
+						<RichTextEditor.BulletList />
+						<RichTextEditor.OrderedList />
+						<RichTextEditor.Subscript />
+						<RichTextEditor.Superscript />
+					</RichTextEditor.ControlsGroup>
 
-				<RichTextEditor.ControlsGroup>
-					<RichTextEditor.Link />
-					<RichTextEditor.Unlink />
-				</RichTextEditor.ControlsGroup>
+					<RichTextEditor.ControlsGroup>
+						<RichTextEditor.Link />
+						<RichTextEditor.Unlink />
+					</RichTextEditor.ControlsGroup>
 
-				<RichTextEditor.ControlsGroup>
-					<RichTextEditor.AlignLeft />
-					<RichTextEditor.AlignCenter />
-					<RichTextEditor.AlignJustify />
-					<RichTextEditor.AlignRight />
-				</RichTextEditor.ControlsGroup>
+					<RichTextEditor.ControlsGroup>
+						<RichTextEditor.AlignLeft />
+						<RichTextEditor.AlignCenter />
+						<RichTextEditor.AlignJustify />
+						<RichTextEditor.AlignRight />
+					</RichTextEditor.ControlsGroup>
 
-				<RichTextEditor.ControlsGroup>
-					<RichTextEditor.Undo />
-					<RichTextEditor.Redo />
-				</RichTextEditor.ControlsGroup>
-			</RichTextEditor.Toolbar>
+					<RichTextEditor.ControlsGroup>
+						<RichTextEditor.Undo />
+						<RichTextEditor.Redo />
+					</RichTextEditor.ControlsGroup>
+				</RichTextEditor.Toolbar>
 
-			<RichTextEditor.Content />
-		</RichTextEditor>
+				<RichTextEditor.Content />
+			</RichTextEditor>
+		</ErrorTooltip>
 	);
 };
 

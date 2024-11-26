@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Text, Image, SimpleGrid, Group, rem, Box, Button } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
+import ErrorTooltip from "./ErrorTooltip";
+import RequiredStar from "./RequiredStar";
 
 export default function ImageDropzone({ form }) {
 	const [file, setFile] = useState(null);
@@ -62,7 +64,7 @@ export default function ImageDropzone({ form }) {
 				form.setFieldValue("profileImage", data.secure_url); // Update the form with the Cloudinary URL
 				alert("Image uploaded successfully!");
 			} else {
-				console.log("Something not right", data);
+				console.error("Something not right", data);
 			}
 		} catch (error) {
 			console.error("Error uploading to Cloudinary:", error);
@@ -74,9 +76,12 @@ export default function ImageDropzone({ form }) {
 
 	return (
 		<div>
-			<Box mb={4} style={{ fontSize: "18px" }}>
-				Upload profile image
-			</Box>
+			<ErrorTooltip message={form.errors?.profileImage}>
+				<Box mb={4} style={{ fontSize: "18px" }}>
+					Upload profile image <RequiredStar />
+				</Box>
+			</ErrorTooltip>
+
 			{!file && !uploadedUrl ? (
 				<Dropzone
 					onDrop={handleSetImage}
@@ -84,9 +89,12 @@ export default function ImageDropzone({ form }) {
 					maxFiles={1}
 					maxSize={5 * 1024 ** 2}
 					accept={IMAGE_MIME_TYPE}
-					style={{ border: "1px solid #e3e3e3" }}
-					w={200}
-					radius="md"
+					style={{
+						border: form.errors?.profileImage
+							? "1px solid #ff4444"
+							: "1px solid #e3e3e3",
+						borderRadius: "8px",
+					}}
 				>
 					<Group
 						justify="center"
@@ -118,17 +126,26 @@ export default function ImageDropzone({ form }) {
 						<Dropzone.Idle>
 							<IconPhoto
 								style={{
-									marginTop: rem(20),
 									width: rem(85),
 									height: rem(85),
-									color: "var(--mantine-color-dimmed)",
+									color: form.errors?.profileImage
+										? "var(--mantine-color-red-5)"
+										: "var(--mantine-color-blue-6)",
 								}}
 								stroke={1.5}
 							/>
 						</Dropzone.Idle>
 
 						<div>
-							<Text size="lg" inline ta="center" pb={15} px="md" lh={1.4} c="gray">
+							<Text
+								size="lg"
+								inline
+								ta="center"
+								py={15}
+								px="md"
+								lh={1.4}
+								c={form.errors?.profileImage ? "red" : "gray"}
+							>
 								Drag image here or click to select file
 							</Text>
 						</div>
@@ -165,7 +182,7 @@ export default function ImageDropzone({ form }) {
 					mt={10}
 					onClick={handleSubmit}
 					loading={uploading}
-					disabled={uploading}
+					disabled={uploading || !file}
 					color="blue"
 				>
 					<IconUpload size={rem(15)} stroke={2} />
