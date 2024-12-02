@@ -1,9 +1,10 @@
-import CVForm from "../components/Form";
+import { Box } from "@mantine/core";
+import CVForm from "../components/modules/cv/Form";
 
 export default function CVFormPage() {
 	return (
-		<div>
+		<Box>
 			<CVForm />
-		</div>
+		</Box>
 	);
 }

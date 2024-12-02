@@ -1,50 +1,51 @@
 import { useState } from "react";
-import { Text, Image, SimpleGrid, Group, rem, Box, Button } from "@mantine/core";
+import { Text, Image, SimpleGrid, Group, rem, Box } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
 import ErrorTooltip from "./ErrorTooltip";
 import RequiredStar from "./RequiredStar";
+import { notifications } from "@mantine/notifications";
 
 export default function ImageDropzone({ form }) {
 	const [file, setFile] = useState(null);
-	const [uploading, setUploading] = useState(false);
+	const [_, setUploading] = useState(false);
 	const [uploadedUrl, setUploadedUrl] = useState(form.values?.profileImage);
 
 	const previews = file ? (
 		<Image
+			draggable={false}
+			fit
+			w={{ base: rem(220), md: rem(220), sm: rem(180) }}
 			src={URL.createObjectURL(file)}
 			alt="Profile Preview"
+			bd={"1px solid #dfdfdf"}
 			onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))}
 		/>
 	) : uploadedUrl ? (
-		<Image src={uploadedUrl} alt="image" />
+		<Image
+			fit
+			bd={"1px solid #dfdfdf"}
+			w={{ base: rem(220), md: rem(220), sm: rem(180) }}
+			draggable={false}
+			src={uploadedUrl}
+			alt="image"
+		/>
 	) : null;
 
 	// const previews = ;
 
-	const handleSetImage = (files) => {
-		setFile(files[0]);
-		form.setFieldValue("profileImage", files[0]); // Keep in form state if needed
-	};
+	const handleSetImage = async (files) => {
+		const selectedFile = files[0];
+		setFile(selectedFile);
+		form.setFieldValue("profileImage", selectedFile); // Keep in form state if needed
 
-	const eraseImage = () => {
-		setFile(null);
-		setUploadedUrl(null);
-		form.setFieldValue("profileImage", null);
-	};
-
-	const handleSubmit = async () => {
-		if (!file) {
-			alert("Please upload an image before submitting.");
-			return;
-		}
-
+		// Immediately upload the file
 		try {
 			setUploading(true);
 
 			// Prepare the file data for Cloudinary
 			const formData = new FormData();
-			formData.append("file", file); // Add the file
+			formData.append("file", selectedFile); // Add the file
 			formData.append("upload_preset", "zuapqncl");
 			formData.append("folder", "cv_builder");
 
@@ -62,26 +63,47 @@ export default function ImageDropzone({ form }) {
 			if (data.secure_url) {
 				setUploadedUrl(data.secure_url); // Store the Cloudinary URL
 				form.setFieldValue("profileImage", data.secure_url); // Update the form with the Cloudinary URL
-				alert("Image uploaded successfully!");
+				notifications.show({
+					title: "Upload Successful",
+					message: "Profile image uploaded successfully!",
+					color: "green",
+				});
 			} else {
-				console.error("Something not right", data);
+				console.error("Upload failed:", data);
+				notifications.show({
+					title: "Upload Failed",
+					message: "Failed to upload image. Please try again.",
+					color: "red",
+				});
 			}
 		} catch (error) {
 			console.error("Error uploading to Cloudinary:", error);
-			alert("Failed to upload image. Please try again.");
+			notifications.show({
+				title: "Upload Error",
+				message: "An error occurred during upload. Please try again.",
+				color: "red",
+			});
 		} finally {
 			setUploading(false);
 		}
 	};
 
+	const eraseImage = () => {
+		setFile(null);
+		setUploadedUrl(null);
+		form.setFieldValue("profileImage", null);
+	};
+
 	return (
 		<div>
-			<ErrorTooltip message={form.errors?.profileImage}>
+			<ErrorTooltip offset={-25} message={form.errors?.profileImage}>
 				<Box mb={4} style={{ fontSize: "18px" }}>
-					Upload profile image <RequiredStar />
+					{/* <Text> */}
+					Upload Image
+					<RequiredStar />
+					{/* </Text> */}
 				</Box>
 			</ErrorTooltip>
-
 			{!file && !uploadedUrl ? (
 				<Dropzone
 					onDrop={handleSetImage}
@@ -126,6 +148,7 @@ export default function ImageDropzone({ form }) {
 						<Dropzone.Idle>
 							<IconPhoto
 								style={{
+									marginTop: rem(20),
 									width: rem(85),
 									height: rem(85),
 									color: form.errors?.profileImage
@@ -138,7 +161,7 @@ export default function ImageDropzone({ form }) {
 
 						<div>
 							<Text
-								size="lg"
+								size="16px"
 								inline
 								ta="center"
 								py={15}
@@ -175,20 +198,22 @@ export default function ImageDropzone({ form }) {
 					</Box>
 				</SimpleGrid>
 			)}
-
 			{/* Submit Button */}
-			{!uploadedUrl && (
+
+			{/* <Flex justify={{ base: "center", md: "left" }}>
 				<Button
 					mt={10}
 					onClick={handleSubmit}
 					loading={uploading}
-					disabled={uploading || !file}
+					disabled={uploading || !file || uploadedUrl}
 					color="blue"
 				>
 					<IconUpload size={rem(15)} stroke={2} />
-					<Text ml={5}>{uploading ? "Uploading..." : "Upload"}</Text>
+					<Text ml={5}>
+						{uploading ? "Uploading..." : uploadedUrl ? "Uploaded" : "Upload"}
+					</Text>
 				</Button>
-			)}
+			</Flex> */}
 		</div>
 	);
 }

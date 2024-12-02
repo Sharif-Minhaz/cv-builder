@@ -5,7 +5,7 @@ const msgInfo = "Are you sure you want to delete this?";
 export default function ConfirmModal({ opened, close, title, text = msgInfo, children }) {
 	return (
 		<>
-			<Modal opened={opened} onClose={close} title={title}>
+			<Modal zIndex={9300} opened={opened} onClose={close} title={title}>
 				<Stack>
 					<Text>{text}</Text>
 					{children}

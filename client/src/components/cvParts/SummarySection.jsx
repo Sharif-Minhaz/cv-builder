@@ -10,7 +10,7 @@ export default function SummarySection({ details }) {
 			<TypographyStylesProvider>
 				<div
 					dangerouslySetInnerHTML={{ __html: details }}
-					style={{ textAlign: "center", fontSize: "12px" }}
+					style={{ textAlign: "center", fontSize: "13px" }}
 				/>
 			</TypographyStylesProvider>
 		</Box>

@@ -1,11 +1,17 @@
 import { Outlet, ScrollRestoration } from "react-router-dom";
-import { Container } from "@mantine/core";
+import { Box, Container } from "@mantine/core";
+import { Navbar } from "../components/Navbar";
+import AppFooter from "../components/Footer";
 
 export default function Root() {
 	return (
-		<Container size="md" p="md">
-			<ScrollRestoration />
-			<Outlet />
-		</Container>
+		<Box>
+			<Navbar />
+			<Container size="md" p="md" mt={65}>
+				<ScrollRestoration />
+				<Outlet />
+			</Container>
+			<AppFooter />
+		</Box>
 	);
 }

@@ -4,7 +4,7 @@ import HeadingDivider from "./HeadingDivider";
 
 export default function EducationSection({ educations }) {
 	return (
-		<Box id="educations" component="section" px={20} mt={-15}>
+		<Box component="section" px={20} mt={-15}>
 			<CvHeading heading="education" />
 			<HeadingDivider w={200} />
 			<Stack gap={12}>

@@ -17,7 +17,8 @@ export default function ErrorTooltip({
 			position={position}
 			label={message}
 			offset={offset}
-			withinPortal
+			withArrow
+			withinPortal={false}
 		>
 			{children}
 		</Tooltip>

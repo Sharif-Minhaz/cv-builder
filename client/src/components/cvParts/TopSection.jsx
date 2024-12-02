@@ -38,6 +38,7 @@ export default function TopSection({ pdf = false, cv }) {
 						style={{ clipPath: "polygon(100% 0, 46% 0, 46% 100%)" }}
 					/>
 					<Image
+						draggable={false}
 						w={100}
 						h={100}
 						radius="50%"
@@ -46,11 +47,11 @@ export default function TopSection({ pdf = false, cv }) {
 						alt="CV profile"
 					/>
 					<div>
-						<Text c="white" size="22.4px">
+						<Text c="white" size="23px">
 							{cv.fname}
 						</Text>
 						<Divider className="top-header" my={8} />
-						<Text c="white" size="13.8px">
+						<Text c="white" size="14px">
 							{cv.designation}
 						</Text>
 					</div>

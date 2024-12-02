@@ -3,7 +3,7 @@ import Education from "./Education";
 import ErrorTooltip from "./ErrorTooltip";
 import RequiredStar from "./RequiredStar";
 
-export default function EducationFields({ addEducation, removeEducation, form }) {
+export default function EducationFields({ form }) {
 	return (
 		<>
 			<ErrorTooltip position="top-end" offset={-25} message={form.errors?.education}>
@@ -14,7 +14,7 @@ export default function EducationFields({ addEducation, removeEducation, form })
 				</Flex>
 			</ErrorTooltip>
 			<Divider />
-			<Education addEducation={addEducation} removeEducation={removeEducation} form={form} />
+			<Education form={form} />
 		</>
 	);
 }

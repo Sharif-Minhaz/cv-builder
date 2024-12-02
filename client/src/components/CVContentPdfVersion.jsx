@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { selectCvValue } from "../features/cv/cvSlice";
+import { selectCvValue } from "../store/cv/cvSlice";
 
 import TopSection from "./cvParts/TopSection";
 import { Box, Divider, Grid } from "@mantine/core";

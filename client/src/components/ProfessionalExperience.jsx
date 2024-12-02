@@ -1,15 +1,18 @@
 import { useState } from "react";
-import { Box, Button, em, Grid, Text, TextInput } from "@mantine/core";
+import { Box, Button, em, Grid, Text } from "@mantine/core";
 import { IconPlus, IconCheck } from "@tabler/icons-react";
 import RichTextEditorComponent from "./RichTextEditorComponent";
 import { useMediaQuery } from "@mantine/hooks";
-import ProfessionalExpList from "./ProfessionalExpList";
-import TooltipInfo from "./TooltipInfo";
 import ErrorTooltip from "./ErrorTooltip";
+import BaseTextInputBox from "./BaseTextInputBox";
+import ViewResultAsTable from "./ViewResultAsTable";
+import IMaskBaseField from "./IMaskBaseField";
 
 export default function ProfessionalExperience({ form }) {
 	const [key, setKey] = useState(1);
 	const isMediumDevice = useMediaQuery(`(max-width: ${em(950)})`);
+
+	// Handle input changes
 	const [professionalExpInput, setProfessionalExpInput] = useState({
 		orgName: "",
 		duration: "",
@@ -48,7 +51,7 @@ export default function ProfessionalExperience({ form }) {
 				form.clearFieldError("professionalExp");
 			} else {
 				// Update an existing entry
-				form.setFieldValue(`professionalExp.${editIndex}`, professionalExpInput);
+				form.replaceListItem("professionalExp", editIndex, professionalExpInput);
 				setEditIndex(-1); // Reset editing state
 			}
 
@@ -94,36 +97,31 @@ export default function ProfessionalExperience({ form }) {
 			<ErrorTooltip message={form.errors?.professionalExp}>
 				<Grid mt={10}>
 					<Grid.Col span={isMediumDevice ? 12 : 4}>
-						<TextInput
-							withAsterisk
+						<BaseTextInputBox
 							label="Organization Name"
 							placeholder="ABC"
 							value={professionalExpInput.orgName}
-							rightSection={<TooltipInfo info="Organization Name" />}
-							onChange={handleChange("orgName")}
-							error={isProfessionalExpError}
+							isError={isProfessionalExpError}
+							handleChange={handleChange("orgName")}
 						/>
 					</Grid.Col>
 					<Grid.Col span={isMediumDevice ? 12 : 4}>
-						<TextInput
-							withAsterisk
-							label="Duration"
-							placeholder="Jul 10 - Dec 10"
+						<IMaskBaseField
+							label="Duration Years"
+							placeholder="2001 - 2005"
+							mask={/^[0-9- ]*$/}
 							value={professionalExpInput.duration}
-							rightSection={<TooltipInfo info="Professional experience duration" />}
-							onChange={handleChange("duration")}
-							error={isProfessionalExpError}
+							isError={isProfessionalExpError}
+							handleChange={handleChange("duration")}
 						/>
 					</Grid.Col>
 					<Grid.Col span={isMediumDevice ? 12 : 4}>
-						<TextInput
-							withAsterisk
+						<BaseTextInputBox
 							label="Designation"
 							placeholder="Software Engineer"
 							value={professionalExpInput.designation}
-							rightSection={<TooltipInfo info="Designation on profession" />}
-							onChange={handleChange("designation")}
-							error={isProfessionalExpError}
+							isError={isProfessionalExpError}
+							handleChange={handleChange("designation")}
 						/>
 					</Grid.Col>
 					<Grid.Col span={12}>
@@ -161,15 +159,11 @@ export default function ProfessionalExperience({ form }) {
 					<Text size="lg" weight={500} mb={10}>
 						Professional Experiences List
 					</Text>
-					{form.values.professionalExp.map((experience, index) => (
-						<ProfessionalExpList
-							removeProfessionalExp={handleRemoveProfessionalExp}
-							handleEditProfessionalExp={handleEditProfessionalExp}
-							key={index}
-							experience={experience}
-							index={index}
-						/>
-					))}
+					<ViewResultAsTable
+						items={form.values.professionalExp}
+						handleRemove={handleRemoveProfessionalExp}
+						handleEdit={handleEditProfessionalExp}
+					/>
 				</Box>
 			)}
 		</Box>

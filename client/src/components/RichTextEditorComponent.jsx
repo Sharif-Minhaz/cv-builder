@@ -18,9 +18,10 @@ const RichTextEditorComponent = ({
 	placeholder,
 	error,
 	disableErrorTooltip = false,
+	h = "auto",
+	mt = -10,
 }) => {
 	const isTablet = useMediaQuery(`(max-width: ${em(768)})`);
-	console.log(value);
 	const editor = useEditor({
 		extensions: [
 			StarterKit,
@@ -50,8 +51,10 @@ const RichTextEditorComponent = ({
 			<RichTextEditor
 				bd={error && "1px solid #ff5b5b"}
 				editor={editor}
-				mt={-10}
+				mt={mt}
 				mih={isTablet ? 250 : 150}
+				h={h}
+				style={{ overflow: "scroll" }}
 			>
 				<RichTextEditor.Toolbar>
 					<RichTextEditor.ControlsGroup>
