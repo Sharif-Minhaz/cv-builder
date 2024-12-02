@@ -1,6 +1,3 @@
-import { useSelector } from "react-redux";
-import { selectCvValue } from "../store/cv/cvSlice";
-
 import TopSection from "./cvParts/TopSection";
 import { Box, Divider, Grid } from "@mantine/core";
 import SummarySection from "./cvParts/SummarySection";
@@ -12,7 +9,7 @@ import LanguageSection from "./cvParts/LanguageSection";
 import { forwardRef } from "react";
 
 const CVContentPdfVersion = forwardRef((props, ref) => {
-	const cv = useSelector(selectCvValue);
+	const cv = props.cv;
 
 	return (
 		<section>

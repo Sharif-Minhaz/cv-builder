@@ -20,8 +20,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDeleteCVMutation } from "../../../store/api/cvSliceApi";
 import { notifications } from "@mantine/notifications";
 
-export default function CVContent({ closeModal = () => {} }) {
-	const cv = useSelector(selectCvValue);
+export default function CVContent({ liveCv = false, closeModal = () => {} }) {
+	const cvInfo = useSelector(selectCvValue);
+	// checking if the liveCv prop is passed, if passed then use it otherwise use the cvInfo from redux store
+	const cv = liveCv ? liveCv : cvInfo;
 	const dispatch = useDispatch();
 	const contentRef = useRef();
 	const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
@@ -104,37 +106,47 @@ export default function CVContent({ closeModal = () => {} }) {
 				</Grid>
 			</Box>
 			<Box hidden>
-				<CVContentPdfVersion ref={contentRef} closeModal={closeModal} />
+				<CVContentPdfVersion cv={cv} ref={contentRef} closeModal={closeModal} />
 			</Box>
-			<Grid justify="right">
-				<Flex gap={12} mt={20} mb={4} mr={10}>
-					<Link to="/">
-						<Button bg="blue" onClick={closeModal}>
-							<IconArrowLeft />
-							Back
-						</Button>
-					</Link>
-					<Button bg="green" onClick={reactToPrintFn}>
-						Generate PDF
-					</Button>
-					<ConfirmModal opened={opened} close={close} title="Delete CV Data">
-						<Flex gap={12} mt={16}>
-							<Button bg="blue" onClick={close}>
-								<IconX size={17} />
-								Cancel
+			{!liveCv ? (
+				<>
+					<Grid justify="right">
+						<Flex gap={12} mt={20} mb={4} mr={10}>
+							<Link to="/">
+								<Button bg="blue" onClick={closeModal}>
+									<IconArrowLeft />
+									Back
+								</Button>
+							</Link>
+							<Button bg="green" onClick={reactToPrintFn}>
+								Generate PDF
 							</Button>
-							<Button bg="red" onClick={handleCVDataDelete}>
-								<IconCheck size={17} />
-								Confirm
+							<ConfirmModal opened={opened} close={close} title="Delete CV Data">
+								<Flex gap={12} mt={16}>
+									<Button bg="blue" onClick={close}>
+										<IconX size={17} />
+										Cancel
+									</Button>
+									<Button bg="red" onClick={handleCVDataDelete}>
+										<IconCheck size={17} />
+										Confirm
+									</Button>
+								</Flex>
+							</ConfirmModal>
+							<Button bg="red" onClick={open}>
+								<IconTrash size={17} />
+								Delete
 							</Button>
 						</Flex>
-					</ConfirmModal>
-					<Button bg="red" onClick={open}>
-						<IconTrash size={17} />
-						Delete
+					</Grid>
+				</>
+			) : (
+				<Flex mt={15} justify="right">
+					<Button bg="green" onClick={reactToPrintFn}>
+						Generate pdf now
 					</Button>
 				</Flex>
-			</Grid>
+			)}
 		</section>
 	);
 }

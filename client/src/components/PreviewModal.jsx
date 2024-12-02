@@ -15,7 +15,7 @@ export default function PreviewModal() {
 			</Modal>
 
 			<Button disabled={!cv.fname} onClick={open}>
-				Preview
+				Full Preview
 			</Button>
 		</>
 	);

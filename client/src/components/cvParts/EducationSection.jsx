@@ -8,7 +8,7 @@ export default function EducationSection({ educations }) {
 			<CvHeading heading="education" />
 			<HeadingDivider w={200} />
 			<Stack gap={12}>
-				{educations.map((edu) => (
+				{educations?.map((edu) => (
 					<Box key={edu.orgName}>
 						<Flex justify="space-between">
 							<Text fw="bold" size="16px">

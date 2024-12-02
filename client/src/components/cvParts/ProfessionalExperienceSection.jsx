@@ -8,7 +8,7 @@ export default function ProfessionalExperienceSection({ proExperience }) {
 			<CvHeading heading="PROFESSIONAL EXPERIENCE" />
 			<HeadingDivider />
 			<Stack gap={15}>
-				{proExperience.map((pro) => (
+				{proExperience?.map((pro) => (
 					<Box key={pro.orgName}>
 						<Flex justify="space-between">
 							<Text fw="bold" size="14px">

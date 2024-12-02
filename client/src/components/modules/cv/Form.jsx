@@ -22,6 +22,7 @@ import {
 	useDeleteCVMutation,
 } from "../../../store/api/cvSliceApi";
 import { notifications } from "@mantine/notifications";
+import CVContent from "./CVContent";
 
 const errorResponse = {
 	title: "Error",
@@ -60,7 +61,6 @@ export default function CVForm() {
 	};
 
 	const form = useForm({
-		mode: "uncontrolled",
 		initialValues,
 		validate: {
 			profileImage: (value) => {
@@ -160,22 +160,19 @@ export default function CVForm() {
 		form.setFieldValue("languages", value);
 	};
 
-	const resetFields = (persistentUser = false) => {
+	const resetFields = () => {
+		const auth = JSON.parse(localStorage.getItem("auth") || "null");
 		// reset redux store
 		dispatch(clearDataFromStore());
 		// reset rich text editors
 		setKey((prev) => prev + Date.now());
 		// clear local storage
 		localStorage.removeItem("cv");
-		// persistent user
-		if (!persistentUser) {
-			const auth = JSON.parse(localStorage.getItem("auth") || "null");
-			localStorage.removeItem("auth");
-			deleteCV(auth);
-		}
-		// close confirmation modal
+		localStorage.removeItem("auth");
+		deleteCV(auth);
 		form.reset();
 		setFormKey(Date.now());
+		// close confirmation modal
 		close();
 		navigate("/result");
 	};
@@ -287,7 +284,7 @@ export default function CVForm() {
 						close={close}
 						title="Reset form data"
 					>
-						<Button w={100} type="button" bg="red" onClick={() => resetFields(true)}>
+						<Button w={100} type="button" bg="red" onClick={resetFields}>
 							<IconX />
 							<Text>Reset</Text>
 						</Button>
@@ -297,6 +294,11 @@ export default function CVForm() {
 					</Button>
 				</Group>
 			</form>
+
+			<Divider mt={15} mb={15} />
+
+			{/* direct preview content */}
+			<CVContent liveCv={form.values} />
 		</Box>
 	);
 }
