@@ -14,7 +14,7 @@ export default function ProfessionalExperienceSection({ proExperience }) {
 							<Text fw="bold" size="14px">
 								{pro.orgName}
 							</Text>
-							<Text size="13px" fs="italic">
+							<Text size="12px" fs="italic">
 								{pro.duration}
 							</Text>
 						</Flex>

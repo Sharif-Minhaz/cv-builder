@@ -9,7 +9,7 @@ import LanguageSection from "./cvParts/LanguageSection";
 import { forwardRef } from "react";
 
 const CVContentPdfVersion = forwardRef((props, ref) => {
-	const cv = props.cv;
+	const cv = props?.cv;
 
 	return (
 		<section>

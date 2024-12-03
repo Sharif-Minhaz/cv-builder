@@ -6,6 +6,8 @@ import ErrorTooltip from "./ErrorTooltip";
 import BaseTextInputBox from "./BaseTextInputBox";
 import ViewResultAsTable from "./ViewResultAsTable";
 import IMaskBaseField from "./IMaskBaseField";
+import DateInputBox from "./DateInputBox";
+import { convertDateToString, convertStringToDate } from "../utils";
 
 export default function Education({ form }) {
 	const isMediumDevice = useMediaQuery(`(max-width: ${em(950)})`);
@@ -13,7 +15,7 @@ export default function Education({ form }) {
 
 	const [educationInput, setEducationInput] = useState({
 		orgName: "",
-		duration: "",
+		duration: [null, null],
 		title: "",
 		grade: "",
 	});
@@ -22,6 +24,14 @@ export default function Education({ form }) {
 
 	// Handle input changes
 	const handleChange = (field) => (event) => {
+		if (field === "duration") {
+			setEducationInput({
+				...educationInput,
+				[field]: event,
+			});
+			return;
+		}
+
 		setEducationInput({
 			...educationInput,
 			[field]: event.target.value,
@@ -32,24 +42,29 @@ export default function Education({ form }) {
 	const handleAddEducation = () => {
 		const { orgName, duration, title, grade } = educationInput;
 
-		if (orgName.trim() && duration.trim() && title.trim() && grade.trim()) {
+		if (orgName.trim() && duration.length && title.trim() && grade.trim()) {
 			if (editIndex === -1) {
 				// Add a new entry
 				form.insertListItem("education", {
 					orgName,
-					duration,
+					duration: convertDateToString(duration),
 					title,
 					grade,
 				});
 				form.clearFieldError("education");
 			} else {
 				// Update an existing entry
-				form.replaceListItem("education", editIndex, { orgName, duration, title, grade });
+				form.replaceListItem("education", editIndex, {
+					orgName,
+					duration: convertDateToString(duration),
+					title,
+					grade,
+				});
 				setEditIndex(-1); // Reset edit state
 			}
 
 			// Reset input fields
-			setEducationInput({ orgName: "", duration: "", title: "", grade: "" });
+			setEducationInput({ orgName: "", duration: [null, null], title: "", grade: "" });
 		} else {
 			alert("Please fill all fields!");
 		}
@@ -57,7 +72,11 @@ export default function Education({ form }) {
 
 	// Edit an existing education entry
 	const handleEditEducation = (index) => {
-		setEducationInput(form.values.education[index]);
+		const selectedEducation = form.values?.education?.[index];
+		setEducationInput({
+			...selectedEducation,
+			duration: convertStringToDate(selectedEducation?.duration),
+		});
 		setEditIndex(index);
 	};
 
@@ -88,13 +107,12 @@ export default function Education({ form }) {
 					</Grid.Col>
 					<Grid.Col span={isMediumDevice ? 6 : 3}>
 						{/* Duration field */}
-						<IMaskBaseField
+						<DateInputBox
+							placeholder="Pick years range"
 							label="Duration Years"
-							placeholder="2001 - 2005"
-							mask={/^[0-9- ]*$/}
-							value={educationInput.duration}
-							isError={isEducationError}
+							error={isEducationError}
 							handleChange={handleChange("duration")}
+							value={educationInput.duration}
 						/>
 					</Grid.Col>
 					<Grid.Col span={isMediumDevice ? 6 : 3}>
@@ -131,7 +149,7 @@ export default function Education({ form }) {
 				</Grid>
 
 				{/* Education List */}
-				{form.values.education.length > 0 && (
+				{form.values?.education.length > 0 && (
 					<Box mt={20}>
 						<Text size="lg" weight={500} mb={10}>
 							Education List

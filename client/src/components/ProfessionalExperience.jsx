@@ -6,7 +6,8 @@ import { useMediaQuery } from "@mantine/hooks";
 import ErrorTooltip from "./ErrorTooltip";
 import BaseTextInputBox from "./BaseTextInputBox";
 import ViewResultAsTable from "./ViewResultAsTable";
-import IMaskBaseField from "./IMaskBaseField";
+import DateInputBox from "./DateInputBox";
+import { convertDateToString, convertStringToDate } from "../utils";
 
 export default function ProfessionalExperience({ form }) {
 	const [key, setKey] = useState(1);
@@ -15,7 +16,7 @@ export default function ProfessionalExperience({ form }) {
 	// Handle input changes
 	const [professionalExpInput, setProfessionalExpInput] = useState({
 		orgName: "",
-		duration: "",
+		duration: [null, null],
 		designation: "",
 		role: "",
 	});
@@ -26,6 +27,13 @@ export default function ProfessionalExperience({ form }) {
 
 	// Handle text field changes
 	const handleChange = (field) => (event) => {
+		if (field === "duration") {
+			setProfessionalExpInput({
+				...professionalExpInput,
+				[field]: event,
+			});
+			return;
+		}
 		setProfessionalExpInput({
 			...professionalExpInput,
 			[field]: event.target.value,
@@ -44,21 +52,27 @@ export default function ProfessionalExperience({ form }) {
 	const handleAddProfessionalExp = () => {
 		const { orgName, duration, designation, role } = professionalExpInput;
 
-		if (orgName.trim() && duration.trim() && designation.trim() && role.trim()) {
+		if (orgName.trim() && duration.length && designation.trim() && role.trim()) {
 			if (editIndex === -1) {
 				// Add a new entry
-				form.insertListItem("professionalExp", professionalExpInput);
+				form.insertListItem("professionalExp", {
+					...professionalExpInput,
+					duration: convertDateToString(duration),
+				});
 				form.clearFieldError("professionalExp");
 			} else {
 				// Update an existing entry
-				form.replaceListItem("professionalExp", editIndex, professionalExpInput);
+				form.replaceListItem("professionalExp", editIndex, {
+					...professionalExpInput,
+					duration: convertDateToString(duration),
+				});
 				setEditIndex(-1); // Reset editing state
 			}
 
 			// Clear input fields
 			setProfessionalExpInput({
 				orgName: "",
-				duration: "",
+				duration: [null, null],
 				designation: "",
 				role: "",
 			});
@@ -71,7 +85,11 @@ export default function ProfessionalExperience({ form }) {
 
 	// Edit an existing professional experience entry
 	const handleEditProfessionalExp = (index) => {
-		setProfessionalExpInput(form.values.professionalExp[index]);
+		const selectedProf = form.values?.professionalExp?.[index];
+		setProfessionalExpInput({
+			...selectedProf,
+			duration: convertStringToDate(selectedProf?.duration),
+		});
 		setEditIndex(index);
 	};
 
@@ -106,13 +124,12 @@ export default function ProfessionalExperience({ form }) {
 						/>
 					</Grid.Col>
 					<Grid.Col span={isMediumDevice ? 12 : 4}>
-						<IMaskBaseField
-							label="Duration Years"
+						<DateInputBox
+							label="Duration"
 							placeholder="2001 - 2005"
-							mask={/^[0-9- ]*$/}
-							value={professionalExpInput.duration}
-							isError={isProfessionalExpError}
+							error={isProfessionalExpError}
 							handleChange={handleChange("duration")}
+							value={professionalExpInput.duration}
 						/>
 					</Grid.Col>
 					<Grid.Col span={isMediumDevice ? 12 : 4}>

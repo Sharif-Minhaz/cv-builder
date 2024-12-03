@@ -1,5 +1,5 @@
-import { Text, Group, Box, Button } from "@mantine/core";
-import { IconFileCv, IconZoom } from "@tabler/icons-react";
+import { Text, Group, Box, Button, Image } from "@mantine/core";
+import { IconZoom } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
 export function Navbar() {
@@ -18,7 +18,9 @@ export function Navbar() {
 		>
 			<Link to="/" style={{ textDecoration: "none" }}>
 				<Group spacing="xl" style={{ height: "100%" }}>
-					<IconFileCv size="1.5rem" stroke={1.5} color="#228be6" />
+					<Box>
+						<Image src="/brand.png" width={25} height={25} />
+					</Box>
 					<Text
 						component="span"
 						variant="gradient"
