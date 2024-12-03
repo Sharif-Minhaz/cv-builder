@@ -79,7 +79,7 @@ export default function ProfessionalExperience({ form }) {
 
 			setKey(Date.now());
 		} else {
-			alert("Please fill all the professional experience fields!");
+			form.setFieldError("professionalExp", "Please fill out all the fields.");
 		}
 	};
 
@@ -101,7 +101,7 @@ export default function ProfessionalExperience({ form }) {
 		if (editIndex === index) {
 			setProfessionalExpInput({
 				orgName: "",
-				duration: "",
+				duration: [null, null],
 				designation: "",
 				role: "",
 			});
@@ -119,7 +119,7 @@ export default function ProfessionalExperience({ form }) {
 							label="Organization Name"
 							placeholder="ABC"
 							value={professionalExpInput.orgName}
-							isError={isProfessionalExpError}
+							isError={!professionalExpInput.orgName && isProfessionalExpError}
 							handleChange={handleChange("orgName")}
 						/>
 					</Grid.Col>
@@ -127,7 +127,7 @@ export default function ProfessionalExperience({ form }) {
 						<DateInputBox
 							label="Duration"
 							placeholder="2001 - 2005"
-							error={isProfessionalExpError}
+							error={!professionalExpInput.duration[0] && isProfessionalExpError}
 							handleChange={handleChange("duration")}
 							value={professionalExpInput.duration}
 						/>
@@ -137,7 +137,7 @@ export default function ProfessionalExperience({ form }) {
 							label="Designation"
 							placeholder="Software Engineer"
 							value={professionalExpInput.designation}
-							isError={isProfessionalExpError}
+							isError={!professionalExpInput.designation && isProfessionalExpError}
 							handleChange={handleChange("designation")}
 						/>
 					</Grid.Col>
@@ -149,8 +149,8 @@ export default function ProfessionalExperience({ form }) {
 							key={key}
 							onChange={handleRoleChange}
 							value={professionalExpInput.role}
-							placeholder="Describe professional experience"
-							error={form.errors?.professionalExp}
+							placeholder="Describe your role there"
+							error={!professionalExpInput.role && form.errors?.professionalExp}
 							disableErrorTooltip
 						/>
 					</Grid.Col>

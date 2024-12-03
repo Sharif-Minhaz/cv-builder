@@ -181,7 +181,7 @@ export default function CVForm() {
 		<Box
 			component="section"
 			bd="1px solid #dfdfdf"
-			p={20}
+			p={{ base: 10, sm: 20 }}
 			bg="white"
 			style={{ borderRadius: "8px", boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
 		>
@@ -231,7 +231,7 @@ export default function CVForm() {
 						error={form.errors?.technicalSkills}
 						value={form.values.technicalSkills}
 						onChange={handleTechnicalSkillsChange}
-						placeholder="Enter your technical skills"
+						placeholder="Enter your technical skills (eg. HTML, CSS, JavaScript etc)"
 					/>
 				</Stack>
 
@@ -249,7 +249,7 @@ export default function CVForm() {
 						value={form.values.portfolio}
 						error={form.errors?.portfolio}
 						onChange={handlePortfolioChange}
-						placeholder="Enter your portfolio section"
+						placeholder="Enter your portfolio section (Project Name, Links, Description, Tech Stack etc)"
 					/>
 				</Stack>
 
@@ -264,7 +264,7 @@ export default function CVForm() {
 						value={form.values?.languages}
 						error={form.errors?.languages}
 						onChange={handleLanguageChange}
-						placeholder="Enter your preferred language"
+						placeholder="Enter your preferred communication language (English, French, Spanish etc)"
 					/>
 				</Stack>
 

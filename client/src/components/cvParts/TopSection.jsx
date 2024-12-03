@@ -21,8 +21,6 @@ export default function TopSection({ pdf = false, cv }) {
 		[cv]
 	);
 
-	// const isDesktop = useMediaQuery(`(min-width: 768px)`);
-
 	return (
 		<Flex justify="space-between" bg="#f4f4f4" py={12} pr={12}>
 			<Flex>
@@ -39,8 +37,8 @@ export default function TopSection({ pdf = false, cv }) {
 					/>
 					<Image
 						draggable={false}
-						w={100}
-						h={100}
+						w={{ base: 60, md: 100 }}
+						h={{ base: 60, md: 100 }}
 						radius="50%"
 						bd="1px solid grey"
 						src={cv.profileImage}
@@ -57,7 +55,7 @@ export default function TopSection({ pdf = false, cv }) {
 					</div>
 				</Flex>
 			</Flex>
-			<Stack gap={5} justify="flex-end" align="flex-end">
+			<Stack gap={5} justify="flex-end" align="flex-end" pl={5}>
 				{socialData.map((data) => (
 					<Flex gap={8} key={data.title} wrap="nowrap">
 						<Box visibleFrom={pdf ? "" : "sm"}>

@@ -6,7 +6,7 @@ export default function ProfessionalExperienceSection({ proExperience }) {
 	return (
 		<Box component="section" px={20}>
 			<CvHeading heading="PROFESSIONAL EXPERIENCE" />
-			<HeadingDivider />
+			<HeadingDivider w={{ base: 240, md: 350 }} />
 			<Stack gap={15}>
 				{proExperience?.map((pro) => (
 					<Box key={pro.orgName}>

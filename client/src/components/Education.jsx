@@ -61,12 +61,13 @@ export default function Education({ form }) {
 					grade,
 				});
 				setEditIndex(-1); // Reset edit state
+				form.clearFieldError("education");
 			}
 
 			// Reset input fields
 			setEducationInput({ orgName: "", duration: [null, null], title: "", grade: "" });
 		} else {
-			alert("Please fill all fields!");
+			form.setFieldError("education", "Please fill out all the fields.");
 		}
 	};
 
@@ -101,7 +102,7 @@ export default function Education({ form }) {
 							label="Organization Name"
 							placeholder="ABC"
 							value={educationInput.orgName}
-							isError={isEducationError}
+							isError={!educationInput.orgName && isEducationError}
 							handleChange={handleChange("orgName")}
 						/>
 					</Grid.Col>
@@ -110,7 +111,7 @@ export default function Education({ form }) {
 						<DateInputBox
 							placeholder="Pick years range"
 							label="Duration Years"
-							error={isEducationError}
+							error={!educationInput.duration[0] && isEducationError}
 							handleChange={handleChange("duration")}
 							value={educationInput.duration}
 						/>
@@ -121,7 +122,7 @@ export default function Education({ form }) {
 							label="Subject Title"
 							placeholder="SWE"
 							value={educationInput.title}
-							isError={isEducationError}
+							isError={!educationInput.title && isEducationError}
 							handleChange={handleChange("title")}
 						/>
 					</Grid.Col>
@@ -132,7 +133,7 @@ export default function Education({ form }) {
 							placeholder="4.00"
 							mask={/^[0-9.]*$/}
 							value={educationInput.grade}
-							isError={isEducationError}
+							isError={!educationInput.grade && isEducationError}
 							handleChange={handleChange("grade")}
 						/>
 					</Grid.Col>

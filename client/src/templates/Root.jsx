@@ -7,7 +7,7 @@ export default function Root() {
 	return (
 		<Box>
 			<Navbar />
-			<Container size="md" p="md" mt={65}>
+			<Container size="md" p={{ base: "10px", md: "md" }} mt={65}>
 				<ScrollRestoration />
 				<Outlet />
 			</Container>

@@ -7,8 +7,6 @@ import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useMediaQuery } from "@mantine/hooks";
-import { em } from "@mantine/core";
 import ErrorTooltip from "./ErrorTooltip";
 import { useEffect } from "react";
 
@@ -21,7 +19,6 @@ const RichTextEditorComponent = ({
 	h = "auto",
 	mt = -10,
 }) => {
-	const isTablet = useMediaQuery(`(max-width: ${em(768)})`);
 	const editor = useEditor({
 		extensions: [
 			StarterKit,
@@ -52,7 +49,7 @@ const RichTextEditorComponent = ({
 				bd={error && "1px solid #ff5b5b"}
 				editor={editor}
 				mt={mt}
-				mih={isTablet ? 250 : 150}
+				mih={{ base: 270, md: 170 }}
 				h={h}
 				style={{ overflow: "scroll" }}
 			>

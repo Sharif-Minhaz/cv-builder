@@ -6,7 +6,7 @@ export default function SummarySection({ details }) {
 	return (
 		<Box component="section" px={20}>
 			<CvHeading heading="Summary" ta="center" />
-			<HeadingDivider w={300} mx="auto" />
+			<HeadingDivider w={{ base: 240, md: 350 }} mx="auto" />
 			<TypographyStylesProvider>
 				<div
 					dangerouslySetInnerHTML={{ __html: details }}

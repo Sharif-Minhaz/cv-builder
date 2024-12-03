@@ -94,7 +94,10 @@ export default function CVContent({ liveCv = false, closeModal = () => {} }) {
 				{/* --------- summary section --------- */}
 				<SummarySection details={cv?.summary} />
 				<Grid mt={16}>
-					<Grid.Col span={isMobile ? 12 : 7} style={{ borderRight: "2px solid #7b7b7b" }}>
+					<Grid.Col
+						span={isMobile ? 12 : 7}
+						style={isMobile ? {} : { borderRight: "2px solid #7b7b7b" }}
+					>
 						<EducationSection educations={cv?.education} />
 						<TechnicalSkillsSection technicalSkills={cv?.technicalSkills} />
 						<ProfessionalExperienceSection proExperience={cv?.professionalExp} />

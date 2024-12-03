@@ -30,10 +30,10 @@ export default function ViewResultAsTable({ items, handleRemove, handleEdit }) {
 		render: (record, index) => (
 			<Group key={index} gap={4} justify="right" wrap="nowrap">
 				<Box onClick={() => handleEdit(index)} style={{ cursor: "pointer" }}>
-					<IconEdit color="#228be6" size={16} />
+					<IconEdit color="#228be6" size={17} />
 				</Box>
 				<Box onClick={() => handleRemove(index)} style={{ cursor: "pointer" }}>
-					<IconTrash color="#ff4d4f" size={16} />
+					<IconTrash color="#ff4d4f" size={17} />
 				</Box>
 			</Group>
 		),
