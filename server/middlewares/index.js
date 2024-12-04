@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const xssClean = require("xss-clean");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 
@@ -20,11 +19,10 @@ const middlewares = [
 	express.urlencoded({ extended: true }),
 	morgan("dev"),
 	limiter,
-	xssClean(),
 	cors({
 		credentials: true,
 		allowedHeaders: "Content-Type,Authorization",
-		origin: ["http://localhost:5173", "http://localhost:8080"],
+		origin: ["http://localhost:5173", "https://buildbestcv.netlify.app"],
 	}),
 ];
 
