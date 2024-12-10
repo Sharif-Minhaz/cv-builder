@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Button, em, Grid, Text } from "@mantine/core";
+import { Box, Button, Checkbox, em, Grid, Text } from "@mantine/core";
 import { IconPlus, IconCheck } from "@tabler/icons-react";
 import RichTextEditorComponent from "./RichTextEditorComponent";
 import { useMediaQuery } from "@mantine/hooks";
@@ -19,6 +19,7 @@ export default function ProfessionalExperience({ form }) {
 		duration: [null, null],
 		designation: "",
 		role: "",
+		currentlyWorking: false,
 	});
 
 	const isProfessionalExpError = !!form.errors?.professionalExp;
@@ -31,6 +32,12 @@ export default function ProfessionalExperience({ form }) {
 			setProfessionalExpInput({
 				...professionalExpInput,
 				[field]: event,
+			});
+			return;
+		} else if (field === "currentlyWorking") {
+			setProfessionalExpInput({
+				...professionalExpInput,
+				[field]: event.currentTarget.checked,
 			});
 			return;
 		}
@@ -67,6 +74,7 @@ export default function ProfessionalExperience({ form }) {
 					duration: convertDateToString(duration),
 				});
 				setEditIndex(-1); // Reset editing state
+				form.clearFieldError("professionalExp");
 			}
 
 			// Clear input fields
@@ -114,16 +122,25 @@ export default function ProfessionalExperience({ form }) {
 			{/* Input Form */}
 			<ErrorTooltip message={form.errors?.professionalExp}>
 				<Grid mt={10}>
-					<Grid.Col span={isMediumDevice ? 12 : 4}>
+					<Grid.Col span={isMediumDevice ? 12 : 3}>
 						<BaseTextInputBox
 							label="Organization Name"
-							placeholder="ABC"
+							placeholder="Enter org. name"
 							value={professionalExpInput.orgName}
 							isError={!professionalExpInput.orgName && isProfessionalExpError}
 							handleChange={handleChange("orgName")}
 						/>
 					</Grid.Col>
-					<Grid.Col span={isMediumDevice ? 12 : 4}>
+					<Grid.Col span={isMediumDevice ? 12 : 3}>
+						<BaseTextInputBox
+							label="Designation"
+							placeholder="Software Engineer"
+							value={professionalExpInput.designation}
+							isError={!professionalExpInput.designation && isProfessionalExpError}
+							handleChange={handleChange("designation")}
+						/>
+					</Grid.Col>
+					<Grid.Col span={isMediumDevice ? 8 : 3}>
 						<DateInputBox
 							label="Duration"
 							placeholder="2001 - 2005"
@@ -132,13 +149,13 @@ export default function ProfessionalExperience({ form }) {
 							value={professionalExpInput.duration}
 						/>
 					</Grid.Col>
-					<Grid.Col span={isMediumDevice ? 12 : 4}>
-						<BaseTextInputBox
-							label="Designation"
-							placeholder="Software Engineer"
-							value={professionalExpInput.designation}
-							isError={!professionalExpInput.designation && isProfessionalExpError}
-							handleChange={handleChange("designation")}
+					<Grid.Col span={isMediumDevice ? 4 : 3}>
+						<Checkbox
+							mt={32}
+							label="Presently Working?"
+							name="currentlyWorking"
+							checked={professionalExpInput.currentlyWorking}
+							onChange={handleChange("currentlyWorking")}
 						/>
 					</Grid.Col>
 					<Grid.Col span={12}>

@@ -7,6 +7,11 @@ body {
     font-optical-sizing: auto;
 }
 
+.cv-content-black-white {
+    font-family: "Roboto", sans-serif !important;
+    font-optical-sizing: auto;
+}
+
 /* ************* overriding default mantine styles ************* */
 
 .section-divider.mantine-Divider-root {
@@ -34,8 +39,17 @@ body {
 }
 
 @media print {
+    @page {
+        size: 8.5in 14in;
+    }
+
     .cv-content {
         font-family: "Lora", serif !important;
+        font-optical-sizing: auto !important;
+    }
+
+    .cv-content-black-white {
+        font-family: "Roboto", sans-serif !important;
         font-optical-sizing: auto !important;
     }
 }

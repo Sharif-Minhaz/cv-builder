@@ -1,9 +1,9 @@
-import CVContent from "../components/modules/cv/CVContent";
+import DefaultCVContent from "../components/modules/cv/DefaultCVContent";
 
 export default function CVPreviewPage() {
 	return (
 		<div>
-			<CVContent />
+			<DefaultCVContent />
 		</div>
 	);
 }

@@ -6,7 +6,8 @@ export const apiSlice = createApi({
 	reducerPath: "api",
 	baseQuery: fetchBaseQuery({
 		baseUrl,
+		credentials: "include", // send cookies with requests
 	}),
-	tagTypes: ["CV"],
+	tagTypes: ["User", "CV"],
 	endpoints: (_) => ({}),
 });

@@ -2,7 +2,7 @@ import { Alert, Button, Flex, Stack, Text } from "@mantine/core";
 import { IconInfoCircle, IconRosetteDiscountCheckFilled, IconX } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 
-export default function SaveAlert({ setShowAlert = () => {} }) {
+export default function SaveAlert({ resetKey = () => {}, setShowAlert = () => {} }) {
 	const icon = <IconInfoCircle />;
 	const navigate = useNavigate();
 
@@ -25,7 +25,15 @@ export default function SaveAlert({ setShowAlert = () => {} }) {
 						<IconRosetteDiscountCheckFilled size={16} stroke={1.5} />
 						<Text ml={4}>OK</Text>
 					</Button>
-					<Button w={120} onClick={() => setShowAlert(false)} bg="#feebeb" c="red">
+					<Button
+						w={120}
+						onClick={() => {
+							setShowAlert(false);
+							resetKey();
+						}}
+						bg="#feebeb"
+						c="red"
+					>
 						<IconX size={16} stroke={1.5} />
 						<Text ml={4}>Cancel</Text>
 					</Button>

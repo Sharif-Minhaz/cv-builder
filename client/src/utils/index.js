@@ -19,8 +19,6 @@ export function convertStringToDate(string) {
 
 	const [start, end] = string.split(" - ").map((str) => str.trim()); // Trim whitespace
 
-	console.log("Start:", start, "End:", end); // Log trimmed strings
-
 	// Parse dates
 	const startDate = dayjs(start, "MMM YYYY", true); // Strict mode parsing
 	const endDate = dayjs(end, "MMM YYYY", true);
@@ -33,4 +31,10 @@ export function convertStringToDate(string) {
 		startDate.isValid() ? startDate.toDate() : null,
 		endDate.isValid() ? endDate.toDate() : null,
 	];
+}
+
+export function decodeHtml(html) {
+	const textArea = document.createElement("textarea");
+	textArea.innerHTML = html;
+	return textArea.value === "undefined" ? "" : textArea.value;
 }

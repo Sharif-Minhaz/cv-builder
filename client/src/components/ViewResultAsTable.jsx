@@ -16,6 +16,11 @@ export default function ViewResultAsTable({ items, handleRemove, handleEdit }) {
 					if (key === "role") {
 						return <div dangerouslySetInnerHTML={{ __html: record[key] }} />;
 					}
+
+					if (key === "orgName") {
+						// Append "(currently working)" if currentlyWorking is true
+						return record.currentlyWorking ? `${record[key]} (Present)` : record[key];
+					}
 					// Default rendering for other fields
 					return record[key];
 				},
@@ -28,7 +33,7 @@ export default function ViewResultAsTable({ items, handleRemove, handleEdit }) {
 		title: <Box mr={6}>Actions</Box>,
 		textAlign: "right",
 		render: (record, index) => (
-			<Group key={index} gap={4} justify="right" wrap="nowrap">
+			<Group key={index + Date.now()} gap={4} justify="right" wrap="nowrap">
 				<Box onClick={() => handleEdit(index)} style={{ cursor: "pointer" }}>
 					<IconEdit color="#228be6" size={17} />
 				</Box>

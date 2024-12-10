@@ -46,19 +46,15 @@ export default function Education({ form }) {
 			if (editIndex === -1) {
 				// Add a new entry
 				form.insertListItem("education", {
-					orgName,
+					...educationInput,
 					duration: convertDateToString(duration),
-					title,
-					grade,
 				});
 				form.clearFieldError("education");
 			} else {
 				// Update an existing entry
 				form.replaceListItem("education", editIndex, {
-					orgName,
+					...educationInput,
 					duration: convertDateToString(duration),
-					title,
-					grade,
 				});
 				setEditIndex(-1); // Reset edit state
 				form.clearFieldError("education");
@@ -76,6 +72,7 @@ export default function Education({ form }) {
 		const selectedEducation = form.values?.education?.[index];
 		setEducationInput({
 			...selectedEducation,
+			grade: selectedEducation?.grade.toString(),
 			duration: convertStringToDate(selectedEducation?.duration),
 		});
 		setEditIndex(index);
@@ -87,7 +84,7 @@ export default function Education({ form }) {
 
 		// If the current editing entry is being removed, reset input fields
 		if (editIndex === index) {
-			setEducationInput({ orgName: "", duration: "", title: "", grade: "" });
+			setEducationInput({ orgName: "", duration: [null, null], title: "", grade: "" });
 			setEditIndex(-1);
 		}
 	};
@@ -100,7 +97,7 @@ export default function Education({ form }) {
 					<Grid.Col span={isMediumDevice ? 6 : 3}>
 						<BaseTextInputBox
 							label="Organization Name"
-							placeholder="ABC"
+							placeholder="Enter org. name"
 							value={educationInput.orgName}
 							isError={!educationInput.orgName && isEducationError}
 							handleChange={handleChange("orgName")}

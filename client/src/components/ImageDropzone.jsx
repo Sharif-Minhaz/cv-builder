@@ -5,8 +5,13 @@ import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
 import ErrorTooltip from "./ErrorTooltip";
 import RequiredStar from "./RequiredStar";
 import { notifications } from "@mantine/notifications";
+import { useUploadImageMutation, useDeleteImageMutation } from "../store/api/imageSliceApi";
+
+const server_url = import.meta.env.VITE_BASE_URL;
 
 export default function ImageDropzone({ form }) {
+	const [uploadImage, { isLoading }] = useUploadImageMutation();
+	const [deleteImage, { isLoading: isDeleting }] = useDeleteImageMutation();
 	const [file, setFile] = useState(null);
 	const [_, setUploading] = useState(false);
 	const [uploadedUrl, setUploadedUrl] = useState(form.values?.profileImage);
@@ -19,7 +24,9 @@ export default function ImageDropzone({ form }) {
 			src={URL.createObjectURL(file)}
 			alt="Profile Preview"
 			bd={"1px solid #dfdfdf"}
-			onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))}
+			onLoad={() => {
+				URL.revokeObjectURL(URL.createObjectURL(file));
+			}}
 		/>
 	) : uploadedUrl ? (
 		<Image
@@ -27,7 +34,7 @@ export default function ImageDropzone({ form }) {
 			bd={"1px solid #dfdfdf"}
 			w={{ base: rem(220), md: rem(220), sm: rem(180) }}
 			draggable={false}
-			src={uploadedUrl}
+			src={`${server_url}/uploads/${uploadedUrl}`} // uploadedUrl
 			alt="image"
 		/>
 	) : null;
@@ -36,40 +43,25 @@ export default function ImageDropzone({ form }) {
 
 	const handleSetImage = async (files) => {
 		const selectedFile = files[0];
-		setFile(selectedFile);
-		form.setFieldValue("profileImage", selectedFile); // Keep in form state if needed
 
+		setFile(selectedFile);
 		// Immediately upload the file
 		try {
 			setUploading(true);
 
-			// Prepare the file data for Cloudinary
-			const formData = new FormData();
-			formData.append("file", selectedFile); // Add the file
-			formData.append("upload_preset", "zuapqncl");
-			formData.append("folder", "cv_builder");
+			// Prepare the file data for upload
+			const response = await uploadImage(selectedFile).unwrap();
 
-			// Upload to Cloudinary
-			const response = await fetch(
-				`https://api.cloudinary.com/v1_1/hostingimagesservice/image/upload`,
-				{
-					method: "POST",
-					body: formData,
-				}
-			);
-
-			const data = await response.json();
-
-			if (data.secure_url) {
-				setUploadedUrl(data.secure_url); // Store the Cloudinary URL
-				form.setFieldValue("profileImage", data.secure_url); // Update the form with the Cloudinary URL
+			if (response.success) {
+				setUploadedUrl(`${response.data?.filename}`); // Store the Cloudinary URL
+				form.setFieldValue("profileImage", response.data?.filename); // Update the form with the Cloudinary URL
 				notifications.show({
 					title: "Upload Successful",
 					message: "Profile image uploaded successfully!",
 					color: "green",
 				});
 			} else {
-				console.error("Upload failed:", data);
+				console.error("Upload failed:", response);
 				notifications.show({
 					title: "Upload Failed",
 					message: "Failed to upload image. Please try again.",
@@ -77,7 +69,7 @@ export default function ImageDropzone({ form }) {
 				});
 			}
 		} catch (error) {
-			console.error("Error uploading to Cloudinary:", error);
+			console.error("Error uploading:", error);
 			notifications.show({
 				title: "Upload Error",
 				message: "An error occurred during upload. Please try again.",
@@ -88,10 +80,27 @@ export default function ImageDropzone({ form }) {
 		}
 	};
 
-	const eraseImage = () => {
+	const eraseImage = async () => {
 		setFile(null);
 		setUploadedUrl(null);
 		form.setFieldValue("profileImage", null);
+
+		// delete image from backend
+		try {
+			await deleteImage(form.values?.profileImage).unwrap();
+			notifications.show({
+				title: "Success",
+				message: "Image deleted successfully",
+				color: "green",
+			});
+		} catch (error) {
+			console.error("Error deleting image:", error);
+			notifications.show({
+				title: "Error",
+				message: "Failed to delete image. Please try again.",
+				color: "red",
+			});
+		}
 	};
 
 	return (
@@ -106,9 +115,11 @@ export default function ImageDropzone({ form }) {
 			</ErrorTooltip>
 			{!file && !uploadedUrl ? (
 				<Dropzone
+					disabled={isLoading || isDeleting}
 					onDrop={handleSetImage}
 					onReject={(files) => console.log("rejected files", files)}
 					maxFiles={1}
+					multiple={false}
 					maxSize={5 * 1024 ** 2}
 					accept={IMAGE_MIME_TYPE}
 					style={{
@@ -183,37 +194,21 @@ export default function ImageDropzone({ form }) {
 						pos="relative"
 					>
 						{previews}
-						<Box pos="absolute" top={1} right={1}>
+						<Box pos="absolute" top={1} right="7px">
 							<IconX
+								cursor={isLoading ? "not-allowed" : "pointer"}
 								style={{
 									width: rem(32),
 									height: rem(32),
-									color: "var(--mantine-color-red-6)",
+									color: isLoading ? "gray" : "var(--mantine-color-red-6)",
 								}}
-								cursor="pointer"
 								stroke={1.5}
-								onClick={eraseImage}
+								onClick={isLoading ? undefined : eraseImage}
 							/>
 						</Box>
 					</Box>
 				</SimpleGrid>
 			)}
-			{/* Submit Button */}
-
-			{/* <Flex justify={{ base: "center", md: "left" }}>
-				<Button
-					mt={10}
-					onClick={handleSubmit}
-					loading={uploading}
-					disabled={uploading || !file || uploadedUrl}
-					color="blue"
-				>
-					<IconUpload size={rem(15)} stroke={2} />
-					<Text ml={5}>
-						{uploading ? "Uploading..." : uploadedUrl ? "Uploaded" : "Upload"}
-					</Text>
-				</Button>
-			</Flex> */}
 		</div>
 	);
 }

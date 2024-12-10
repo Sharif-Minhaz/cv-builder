@@ -2,6 +2,7 @@ import { em, Grid } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import TextInputBox from "./TextInputBox";
 import PhoneInputBox from "./PhoneInputBox";
+import NumberInputBox from "./NumberInputBox";
 
 export default function BasicFields({ form }) {
 	const isTablet = useMediaQuery(`(max-width: ${em(768)})`);
@@ -10,12 +11,20 @@ export default function BasicFields({ form }) {
 		<>
 			<Grid>
 				{/* full name field */}
-				<Grid.Col span={12}>
+				<Grid.Col span={isTablet ? 12 : 6}>
 					<TextInputBox
 						form={form}
 						name="fname"
 						label="Full Name"
 						placeholder="John Doe"
+					/>
+				</Grid.Col>
+				<Grid.Col span={isTablet ? 12 : 6}>
+					<NumberInputBox
+						form={form}
+						name="expectedSalary"
+						label="Your Expected Salary (BDT)"
+						placeholder="10,000"
 					/>
 				</Grid.Col>
 				{/* Designation field */}

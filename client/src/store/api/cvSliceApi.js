@@ -7,6 +7,11 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
 			providesTags: ["CV"],
 		}),
 
+		viewUserCV: builder.query({
+			query: () => `/cv/user`,
+			providesTags: ["CV"],
+		}),
+
 		createCV: builder.mutation({
 			query: (body) => {
 				return {
@@ -52,4 +57,5 @@ export const {
 	useCreateCVMutation,
 	useDeleteCVMutation,
 	useUpdateCVMutation,
+	useViewUserCVQuery,
 } = extendedApiSlice;

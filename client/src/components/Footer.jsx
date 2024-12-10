@@ -15,7 +15,7 @@ export default function AppFooter() {
 					<Text c="dimmed" size="sm">
 						© {new Date().getFullYear()} RightBrain Solution. All rights reserved.
 					</Text>
-					<Group spacing={0} position="right" noWrap>
+					<Group spacing={0} position="right">
 						<ActionIcon
 							size="lg"
 							color="gray"

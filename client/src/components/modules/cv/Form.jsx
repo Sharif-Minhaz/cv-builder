@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, Group, Stack, Divider, Text, Box, Grid, Flex } from "@mantine/core";
+import { Button, Stack, Divider, Text, Box, Grid, Flex } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import ImageDropzone from "../../ImageDropzone";
 import RichTextEditorComponent from "../../RichTextEditorComponent";
@@ -10,11 +10,11 @@ import { selectCvValue, addDataToStore, clearDataFromStore } from "../../../stor
 import BasicFields from "../../BasicFields";
 import EducationFields from "../../EducationFields";
 import ProfessionalFields from "../../ProfessionalFields";
-import SaveAlert from "../../SaveAlert";
+// import SaveAlert from "../../SaveAlert";
 import ConfirmModal from "../../ConfirmModal";
 import { IconX } from "@tabler/icons-react";
 import RequiredStar from "../../RequiredStar";
-import { strippedText } from "../../../utils";
+import { decodeHtml, strippedText } from "../../../utils";
 import { useNavigate } from "react-router-dom";
 import {
 	useCreateCVMutation,
@@ -22,7 +22,8 @@ import {
 	useDeleteCVMutation,
 } from "../../../store/api/cvSliceApi";
 import { notifications } from "@mantine/notifications";
-import CVContent from "./CVContent";
+import { selectAuthValue } from "../../../store/auth/authSlice";
+import DefaultCVContent from "./DefaultCVContent";
 
 const errorResponse = {
 	title: "Error",
@@ -32,32 +33,45 @@ const errorResponse = {
 };
 
 export default function CVForm() {
+	const user = useSelector(selectAuthValue);
+	const cvValue = useSelector(selectCvValue);
 	const [createCV, cvResponseInfo] = useCreateCVMutation();
 	const [updateCV, cvUpdateInfo] = useUpdateCVMutation();
 	const [deleteCV] = useDeleteCVMutation();
 	const navigate = useNavigate();
-	const [showAlert, setShowAlert] = useState(false);
+	// const [showAlert, setShowAlert] = useState(false);
 	const [key, setKey] = useState(1);
 	const [formKey, setFormKey] = useState(0);
-	const cvValue = useSelector(selectCvValue);
 	const dispatch = useDispatch();
 	const [opened, { open, close }] = useDisclosure(false);
+	const [openedModal, { open: openModal, close: closeModal }] = useDisclosure(false);
 
 	const initialValues = {
 		profileImage: cvValue?.profileImage || "",
-		fname: cvValue?.fname || "",
+		expectedSalary: cvValue?.expectedSalary || "",
+		fname: cvValue?.fname || user?.username || "",
 		designation: cvValue?.designation || "",
-		email: cvValue?.email || "",
+		email: cvValue?.email || user?.email || "",
 		mobile: cvValue?.mobile || "",
 		github: cvValue?.github || "",
 		linkedIn: cvValue?.linkedIn || "",
 		website: cvValue?.website || "",
-		summary: cvValue?.summary || "",
+		summary: decodeHtml(cvValue?.summary) || "",
 		education: cvValue?.education?.[0]?.orgName ? cvValue?.education : [], // { orgName: "", duration: "", title: "", grade: 0 }
-		technicalSkills: cvValue?.technicalSkills || "",
-		professionalExp: cvValue?.professionalExp?.[0]?.orgName ? cvValue?.professionalExp : [], // { orgName: "", duration: "", designation: "", role: "" }
-		portfolio: cvValue?.portfolio || "",
-		languages: cvValue?.languages || "",
+		technicalSkills: decodeHtml(cvValue?.technicalSkills) || "",
+		professionalExp: cvValue?.professionalExp?.[0]?.orgName
+			? cvValue?.professionalExp?.map((item) => {
+					if (item.role) {
+						return {
+							...item,
+							role: decodeHtml(item.role), // Decode the role field
+						};
+					}
+					return item; // Return the item as is if `role` is not present
+			  })
+			: [], // { orgName: "", duration: "", designation: "", role: "" }
+		portfolio: decodeHtml(cvValue?.portfolio) || "",
+		languages: decodeHtml(cvValue?.languages) || "",
 	};
 
 	const form = useForm({
@@ -70,6 +84,7 @@ export default function CVForm() {
 				return null;
 			},
 			fname: (value) => (value?.trim().length > 0 ? null : "First name is required"),
+			expectedSalary: (value) => (value > 0 ? null : "Expected salary is required"),
 			designation: (value) => (value?.trim().length > 0 ? null : "Designation is required"),
 			email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email address"),
 			mobile: (value) => (value?.trim().length > 0 ? null : "Mobile number required"),
@@ -102,10 +117,12 @@ export default function CVForm() {
 
 	const handleSuccessCVSubmission = (response, values) => {
 		if (response.success) {
-			setShowAlert(true);
+			// setShowAlert(true);
 			dispatch(addDataToStore(values));
 			localStorage.setItem("cv", JSON.stringify({ json: values }));
+			navigate("/result");
 		} else {
+			console.error(response);
 			notifications.show(errorResponse);
 		}
 	};
@@ -113,29 +130,18 @@ export default function CVForm() {
 	// global form submission handler
 	const handleSubmit = async (values) => {
 		// handle user identification
-		const auth = JSON.parse(localStorage.getItem("auth") || "null");
-		let isGuest = !auth;
+		let isGuest = !cvValue?._id;
 		try {
-			if (!auth) {
-				localStorage.setItem("auth", JSON.stringify(crypto.randomUUID()));
+			if (isGuest) {
 				// save response to database
-				const response = await createCV({
-					...values,
-					userId: JSON.parse(localStorage.getItem("auth")),
-				}).unwrap();
-				// mark the user as not guest after saving the cv data
-				isGuest = false;
+				const response = await createCV(values).unwrap();
 				return handleSuccessCVSubmission(response, values);
 			}
 
-			const response = await updateCV({ ...values, userId: auth }).unwrap();
+			const response = await updateCV(values).unwrap();
 			handleSuccessCVSubmission(response, values);
 		} catch (error) {
 			console.error(error);
-			if (isGuest) {
-				// remove the guest user assigned id if error occurs during save
-				localStorage.removeItem("auth");
-			}
 			notifications.show(errorResponse);
 		}
 	};
@@ -185,7 +191,7 @@ export default function CVForm() {
 			bg="white"
 			style={{ borderRadius: "8px", boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
 		>
-			{showAlert && <SaveAlert setShowAlert={setShowAlert} />}
+			{/* {showAlert && <SaveAlert setShowAlert={setShowAlert} />} */}
 			{/* ----------- form wrapper ---------- */}
 			<form key={formKey} onSubmit={form.onSubmit(handleSubmit)}>
 				{/* --------- image selector ----------- */}
@@ -269,14 +275,28 @@ export default function CVForm() {
 				</Stack>
 
 				{/* ------- form action section ------- */}
-				<Group justify="flex-end" mt="md">
-					<PreviewModal />
-					<Button disabled={cvResponseInfo.isLoading} bg="teal" type="submit">
-						{cvResponseInfo.isLoading || cvUpdateInfo.isLoading ? (
-							<Text ml={4}>Saving...</Text>
-						) : (
-							<Text ml={4}>Save</Text>
-						)}
+				<Flex gap={10} wrap="wrap" justify={{ base: "center", sm: "flex-end" }} mt="md">
+					{/* ---------- preview modal ---------- */}
+					<PreviewModal
+						opened={openedModal}
+						cv={cvValue}
+						previewButton={
+							<Button disabled={!cvValue?.fname} onClick={openModal}>
+								Full Preview
+							</Button>
+						}
+					>
+						<DefaultCVContent closeModal={closeModal} />
+					</PreviewModal>
+
+					{/* ---------- save button ---------- */}
+					<Button
+						loading={cvResponseInfo.isLoading || cvUpdateInfo.isLoading}
+						disabled={cvResponseInfo.isLoading}
+						bg="teal"
+						type="submit"
+					>
+						<Text ml={4}>Save</Text>
 					</Button>
 					<ConfirmModal
 						text="Are you sure you want to reset the form?"
@@ -292,13 +312,13 @@ export default function CVForm() {
 					<Button type="button" bg="red" onClick={open}>
 						Reset
 					</Button>
-				</Group>
+				</Flex>
 			</form>
 
 			<Divider mt={15} mb={15} />
 
 			{/* direct preview content */}
-			<CVContent liveCv={form.values} />
+			<DefaultCVContent liveCv={form.values} />
 		</Box>
 	);
 }
