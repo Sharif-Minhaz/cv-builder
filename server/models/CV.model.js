@@ -1,35 +1,23 @@
 const { model, Schema } = require("mongoose");
 
-const educationSchema = new Schema({
-	orgName: { type: String, required: true },
-	duration: { type: String, required: true },
-	title: { type: String, required: true },
-	grade: { type: Number, required: true },
-});
-
-const professionalExpSchema = new Schema({
-	orgName: { type: String, required: true },
-	duration: { type: String, required: true },
-	designation: { type: String, required: true },
-	role: { type: String, required: true },
-});
-
 const cvSchema = new Schema(
 	{
 		userId: {
-			type: String,
+			type: Schema.Types.ObjectId, // Use ObjectId to reference another collection
+			ref: "User",
 			required: true,
 		},
-		profileImage: {
-			type: String,
-			required: true,
-		},
+		profileImage: String,
 		fname: {
 			type: String,
 			required: true,
 		},
 		designation: {
 			type: String,
+			required: true,
+		},
+		expectedSalary: {
+			type: Number,
 			required: true,
 		},
 		email: {
@@ -57,7 +45,12 @@ const cvSchema = new Schema(
 			required: true,
 		},
 		education: {
-			type: [educationSchema],
+			type: [
+				{
+					type: Schema.Types.ObjectId, // Use ObjectId to reference another collection
+					ref: "Education",
+				},
+			],
 			validate: {
 				validator: function (value) {
 					return value.length > 0; // Ensure at least one entry exists
@@ -70,7 +63,12 @@ const cvSchema = new Schema(
 			required: true,
 		},
 		professionalExp: {
-			type: [professionalExpSchema],
+			type: [
+				{
+					type: Schema.Types.ObjectId, // Use ObjectId to reference another collection
+					ref: "ProfessionalExperience",
+				},
+			],
 			validate: {
 				validator: function (value) {
 					return value.length > 0; // Ensure at least one entry exists

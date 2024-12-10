@@ -1,8 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+const xssClean = require("xss-clean");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
+const path = require("path");
 
 const limiter = rateLimit({
 	windowMs: 1 * 60 * 1000, // 1 minute
@@ -14,18 +17,27 @@ const limiter = rateLimit({
 
 const middlewares = [
 	helmet(),
-	express.static("public"),
+	cors({
+		credentials: true,
+		origin: ["http://localhost:5173", "http://localhost:5174"],
+	}),
+	cookieParser(),
 	express.json(),
 	express.urlencoded({ extended: true }),
 	morgan("dev"),
 	limiter,
-	cors({
-		credentials: true,
-		allowedHeaders: "Content-Type,Authorization",
-		origin: ["http://localhost:5173", "https://buildbestcv.netlify.app"],
-	}),
+	xssClean(),
 ];
 
 module.exports = (app) => {
 	app.use(middlewares);
+
+	app.use(
+		"/uploads",
+		express.static(path.join(__dirname, "..", "public", "uploads"), {
+			setHeaders: (res) => {
+				res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+			},
+		})
+	);
 };

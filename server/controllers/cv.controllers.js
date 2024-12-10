@@ -1,22 +1,17 @@
 const CV = require("../models/CV.model");
+const Education = require("../models/Education.model");
+const ProfessionalExp = require("../models/ProfessionalExperience.model");
+const { addOrganizations } = require("../services/cv.services");
 
-/**
- * @api {get} /cv Get all CV Info
- * @apiName Get all CV Info
- * @apiGroup CV
- *
- * @apiSuccess {Boolean} success If the request is successfully processed.
- * @apiSuccess {Object[]} data Array of CV objects.
- *
- * @apiSuccessExample Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *       "success": true,
- *       "data": [...]
- *     }
- */
 exports.getAllCVInfo = async (req, res) => {
-	const cv = await CV.find().lean();
+	// find CV
+	const cv = await CV.find()
+		.populate({ path: "education", select: "-_id orgName duration title grade" })
+		.populate({
+			path: "professionalExp",
+			select: "-_id orgName duration designation role",
+		})
+		.lean();
 
 	res.status(200).json({
 		success: true,
@@ -24,35 +19,10 @@ exports.getAllCVInfo = async (req, res) => {
 	});
 };
 
-/**
- * @api {get} /cv/:id Get a single CV Info
- * @apiName Get a single CV Info
- * @apiGroup CV
- *
- * @apiParam {String} id Unique identifier of the CV.
- *
- * @apiSuccess {Boolean} success If the request is successfully processed.
- * @apiSuccess {Object} data CV object.
- *
- * @apiSuccessExample Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *       "success": true,
- *       "data": {...}
- *     }
- *
- * @apiError CVNotFound CV not found.
- *
- * @apiErrorExample Error-Response:
- *     HTTP/1.1 404 Not Found
- *     {
- *       "success": false,
- *       "message": "CV not found"
- *     }
- */
 exports.getSingleCVInfo = async (req, res) => {
 	const { id } = req.params;
 
+	// check if id is provided
 	if (!id) {
 		return res.status(400).json({
 			success: false,
@@ -60,8 +30,16 @@ exports.getSingleCVInfo = async (req, res) => {
 		});
 	}
 
-	const cv = await CV.findById(id).lean();
+	// find CV
+	const cv = await CV.findById(id)
+		.populate({ path: "education", select: "-_id orgName duration title grade" })
+		.populate({
+			path: "professionalExp",
+			select: "-_id orgName duration designation role",
+		})
+		.lean();
 
+	// check if CV is found
 	if (!cv) {
 		return res.status(404).json({
 			success: false,
@@ -75,51 +53,41 @@ exports.getSingleCVInfo = async (req, res) => {
 	});
 };
 
-/**
- * @api {post} /cv Create a new CV
- * @apiName CreateCV
- * @apiGroup CV
- *
- * @apiParam {String} user User identifier.
- * @apiParam {String} profileImage Profile image URL.
- * @apiParam {String} fname First name.
- * @apiParam {String} designation Job designation.
- * @apiParam {String} email Email address.
- * @apiParam {String} mobile Mobile number.
- * @apiParam {String} github GitHub profile URL.
- * @apiParam {String} linkedIn LinkedIn profile URL.
- * @apiParam {String} website Personal website URL.
- * @apiParam {String} summary Professional summary.
- * @apiParam {Object[]} education Array of education entries.
- * @apiParam {String} technicalSkills Technical skills.
- * @apiParam {Object[]} professionalExp Array of professional experience entries.
- * @apiParam {String} portfolio Portfolio URL.
- * @apiParam {String} languages Known languages.
- *
- * @apiSuccess {Boolean} success If the request is successfully processed.
- * @apiSuccess {Object} data Created CV object.
- * @apiSuccess {String} message Success message.
- *
- * @apiSuccessExample Success-Response:
- *     HTTP/1.1 201 Created
- *     {
- *       "success": true,
- *       "data": {...},
- *       "message": "CV created successfully"
- *     }
- */
 exports.createCV = async (req, res) => {
-	const newCV = await CV.create(req.body);
+	const userId = req.user._id;
+
+	// check if cv is already exist
+	const isCVExist = await CV.exists({ userId });
+
+	if (isCVExist) {
+		return res.status(409).json({
+			success: false,
+			message: "CV already exist",
+		});
+	}
+
+	// add organizations
+	const { educationInfo, professionalExpInfo } = await addOrganizations(req.body);
+
+	// create new CV
+	const newCV = new CV({ ...req.body, userId: req.user._id });
+
+	// add education and professional experience ids
+	newCV.education = educationInfo.map((edu) => edu._id);
+	newCV.professionalExp = professionalExpInfo.map((exp) => exp._id);
+
+	// save CV
+	const createdCV = await newCV.save();
 
 	res.status(201).json({
 		success: true,
-		data: newCV,
+		data: createdCV,
 		message: "CV created successfully",
 	});
 };
 
 exports.updateCV = async (req, res) => {
-	const { userId } = req.body;
+	const userId = req.user._id;
 
 	if (!userId) {
 		return res.status(400).json({
@@ -128,16 +96,39 @@ exports.updateCV = async (req, res) => {
 		});
 	}
 
-	const updatedCV = await CV.findOneAndUpdate({ userId }, req.body, {
-		new: true,
-	});
+	// Fetch current CV
+	const currentCV = await CV.findOne({ userId });
 
-	if (!updatedCV) {
+	if (!currentCV) {
 		return res.status(404).json({
 			success: false,
 			message: "CV not found",
 		});
 	}
+
+	// Add new organizations
+	const { educationInfo, professionalExpInfo } = await addOrganizations(req.body);
+
+	const newEducationIds = educationInfo.map((edu) => edu._id);
+	const newProfessionalExpIds = professionalExpInfo.map((exp) => exp._id);
+
+	// Delete existing `education` and `professionalExp` data
+	await Promise.all([
+		Education.deleteMany({ _id: { $in: currentCV.education } }),
+		ProfessionalExp.deleteMany({ _id: { $in: currentCV.professionalExp } }),
+	]);
+
+	// Update CV with new data
+	const updatedCV = await CV.findOneAndUpdate(
+		{ userId },
+		{ ...req.body, education: newEducationIds, professionalExp: newProfessionalExpIds },
+		{ new: true }
+	)
+		.populate({ path: "education", select: "-_id orgName duration title grade" })
+		.populate({
+			path: "professionalExp",
+			select: "-_id orgName duration designation role",
+		});
 
 	res.status(200).json({
 		success: true,
@@ -146,9 +137,37 @@ exports.updateCV = async (req, res) => {
 	});
 };
 
+exports.getUserCV = async (req, res) => {
+	const userId = req.user._id;
+
+	// find CV
+	const cv = await CV.findOne({ userId })
+		.populate({ path: "education", select: "-_id orgName duration title grade" })
+		.populate({
+			path: "professionalExp",
+			select: "-_id orgName duration designation role",
+		})
+		.lean();
+
+	// check if CV is found
+	if (!cv) {
+		return res.status(404).json({
+			success: false,
+			message: "CV not found",
+			data: {},
+		});
+	}
+
+	res.status(200).json({
+		success: true,
+		data: cv,
+	});
+};
+
 exports.deleteCV = async (req, res) => {
 	const { userId } = req.params;
 
+	// check if userId is provided
 	if (!userId) {
 		return res.status(400).json({
 			success: false,
@@ -156,8 +175,21 @@ exports.deleteCV = async (req, res) => {
 		});
 	}
 
+	// delete CV
 	const deletedCV = await CV.findOneAndDelete({ userId });
 
+	// remove CV from education and professional experience
+	await CV.updateMany(
+		{},
+		{
+			$pull: {
+				education: deletedCV.education,
+				professionalExp: deletedCV.professionalExp,
+			},
+		}
+	);
+
+	// check if CV is deleted
 	if (!deletedCV) {
 		return res.status(404).json({
 			success: false,

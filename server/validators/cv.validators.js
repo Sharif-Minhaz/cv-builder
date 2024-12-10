@@ -1,14 +1,12 @@
 const { body } = require("express-validator");
 
 const validateNewCV = [
-	// Validate 'user'
-	body("userId").trim().notEmpty().withMessage("User id is required"),
-
 	// Validate 'profileImage'
 	body("profileImage").trim().notEmpty().withMessage("Profile image is required"),
 
 	// Validate 'fname'
 	body("fname").trim().notEmpty().withMessage("First name is required"),
+	body("expectedSalary").isNumeric().withMessage("Expected salary must be a number"),
 
 	// Validate 'designation'
 	body("designation").trim().notEmpty().withMessage("Designation is required"),
