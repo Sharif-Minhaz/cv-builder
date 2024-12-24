@@ -1,11 +1,11 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
-import Root from "../templates/Root";
+import Root from "../components/layouts/Root";
 import CVFormPage from "../pages/CVFormPage";
 import CVPreviewPage from "../pages/CVPreviewPage";
 import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
-import ContentRoot from "../templates/ContentRoot";
-import AuthRoot from "../templates/AuthRoot";
+import ContentRoot from "../components/layouts/ContentRoot";
+import AuthRoot from "../components/layouts/AuthRoot";
 import Authenticated from "./Authenticated";
 import AlreadyLoggedIn from "./AlreadyLoggedIn";
 import ThemePage from "../pages/ThemePage";

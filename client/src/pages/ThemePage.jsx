@@ -1,11 +1,11 @@
 import { Box, Divider, Grid } from "@mantine/core";
-import SingleTheme from "../components/themes/SingleTheme";
+import SingleTheme from "../components/modules/cv-modules/themes/SingleTheme";
 import defaultTheme from "../assets/themes/default-theme.png";
 import blackWhite from "../assets/themes/black-white.webp";
 import modern from "../assets/themes/modern.webp";
 import editors from "../assets/themes/editors.webp";
-import DefaultCVContent from "../components/modules/cv/DefaultCVContent";
-import BlackWhiteContent from "../components/modules/cv/BlackWhiteContent";
+import DefaultCVContent from "../components/modules/cv-modules/cv/DefaultCVContent";
+import BlackWhiteContent from "../components/modules/cv-modules/cv/BlackWhiteContent";
 
 const themeData = [
 	{

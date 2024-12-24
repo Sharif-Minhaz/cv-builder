@@ -1,4 +1,4 @@
-import DefaultCVContent from "../components/modules/cv/DefaultCVContent";
+import DefaultCVContent from "../components/modules/cv-modules/cv/DefaultCVContent";
 
 export default function CVPreviewPage() {
 	return (
