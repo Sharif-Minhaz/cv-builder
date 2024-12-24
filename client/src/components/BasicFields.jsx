@@ -73,7 +73,7 @@ export default function BasicFields({ form }) {
 					<TextInputBox
 						form={form}
 						name="linkedIn"
-						label="Your linked in link"
+						label="Your linkedin profile link"
 						placeholder="https://www.linkedin.com/in/minhaz-sharif-614724205"
 					/>
 				</Grid.Col>

@@ -14,6 +14,7 @@ export default function DateInputBox({
 	const icon = <IconCalendar style={{ width: rem(18), height: rem(18) }} stroke={1.5} />;
 	return (
 		<DatePickerInput
+			withAsterisk
 			valueFormat="MMM YYYY"
 			leftSection={icon}
 			leftSectionPointerEvents="none"

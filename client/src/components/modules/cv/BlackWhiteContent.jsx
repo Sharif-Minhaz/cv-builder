@@ -9,6 +9,7 @@ import ThemeButton from "../../ThemeButton";
 import { useReactToPrint } from "react-to-print";
 import { useRef } from "react";
 import CVContentPdfVersion from "../../cvTemplates/blackWhite/CVContentPdfVersion";
+import { EmptyResult } from "../../EmptyResult";
 
 export default function BlackWhiteContent({ closeModal = () => {} }) {
 	const cv = useSelector(selectCvValue);
@@ -34,6 +35,9 @@ export default function BlackWhiteContent({ closeModal = () => {} }) {
 			}
 		},
 	});
+
+	// if form content is empty then return the empty result
+	if (!cv?.fname) return <EmptyResult />;
 
 	return (
 		<section>

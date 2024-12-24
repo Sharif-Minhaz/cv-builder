@@ -19,6 +19,6 @@ export const cvSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const { addDataToStore, clearDataFromStore } = cvSlice.actions;
 
-export const selectCvValue = (state) => state.cv.cv;
+export const selectCvValue = (state) => state.cv?.cv;
 
 export default cvSlice.reducer;

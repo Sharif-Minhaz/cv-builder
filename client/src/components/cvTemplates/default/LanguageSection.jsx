@@ -11,7 +11,12 @@ export default function LanguageSection({ languages }) {
 			<HeadingDivider w={200} />
 			<TypographyStylesProvider>
 				<div
-					style={{ fontSize: "13px", lineHeight: 1.1 }}
+					style={{
+						fontSize: "13px",
+						lineHeight: 1.1,
+						overflow: "hidden",
+						textOverflow: "ellipsis",
+					}}
 					dangerouslySetInnerHTML={{ __html: decodedLanguages }}
 				/>
 			</TypographyStylesProvider>

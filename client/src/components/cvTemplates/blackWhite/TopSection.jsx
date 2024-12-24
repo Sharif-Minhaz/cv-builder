@@ -20,7 +20,7 @@ export default function TopSection({ cv, pdf = false }) {
 					radius="50%"
 					bd="1px solid #dfdfdf"
 					src={`${server_url}/uploads/${cv?.profileImage}`}
-					alt="CV profile"
+					alt=""
 				/>
 				<div>
 					<Text

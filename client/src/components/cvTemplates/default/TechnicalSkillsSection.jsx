@@ -12,7 +12,12 @@ export default function TechnicalSkillsSection({ technicalSkills }) {
 			<HeadingDivider w={{ base: 200, md: 300 }} />
 			<TypographyStylesProvider>
 				<div
-					style={{ fontSize: "12px", lineHeight: "12px" }}
+					style={{
+						fontSize: "12px",
+						lineHeight: "12px",
+						overflow: "hidden",
+						textOverflow: "ellipsis",
+					}}
 					dangerouslySetInnerHTML={{ __html: decodedTech }}
 				/>
 			</TypographyStylesProvider>

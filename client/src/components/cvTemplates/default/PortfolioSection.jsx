@@ -12,7 +12,7 @@ export default function PortfolioSection({ portfolio }) {
 			<TypographyStylesProvider>
 				<div
 					className="portfolio-section"
-					style={{ fontSize: "13px" }}
+					style={{ fontSize: "13px", overflow: "hidden", textOverflow: "ellipsis" }}
 					dangerouslySetInnerHTML={{ __html: decodedPortfolio }}
 				/>
 			</TypographyStylesProvider>

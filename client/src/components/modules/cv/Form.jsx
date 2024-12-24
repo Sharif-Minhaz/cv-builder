@@ -295,6 +295,17 @@ export default function CVForm() {
 						disabled={cvResponseInfo.isLoading}
 						bg="teal"
 						type="submit"
+						onClick={() => {
+							if (!form.isValid()) {
+								notifications.show({
+									title: "Form error occurred",
+									message: "Check out the error fileds.",
+									color: "red",
+									bg: "#fff0ce",
+									style: { color: "yellow" },
+								});
+							}
+						}}
 					>
 						<Text ml={4}>Save</Text>
 					</Button>
@@ -315,7 +326,7 @@ export default function CVForm() {
 				</Flex>
 			</form>
 
-			<Divider mt={15} mb={15} />
+			<Divider my={15} />
 
 			{/* direct preview content */}
 			<DefaultCVContent liveCv={form.values} />

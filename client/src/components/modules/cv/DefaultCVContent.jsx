@@ -77,7 +77,7 @@ export default function DefaultCVContent({ liveCv = false, closeModal = () => {}
 	};
 
 	// if form content is empty then return the empty result
-	if (!cv.fname) return <EmptyResult />;
+	if (!cv?.fname) return <EmptyResult />;
 
 	return (
 		<section>
